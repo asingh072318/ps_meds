@@ -1,14 +1,20 @@
 import React, { Component } from "react";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles/';
+import PropTypes from "prop-types";
 
 import "../../styles/core.scss";
 
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
+});
 export default class CoreLayout extends Component {
   render() {
     let { children } = this.props;
     return (
-      <MuiThemeProvider>
-        <div className="container-fluid core-layout">
+      <MuiThemeProvider theme={theme}>
+        <div className="core-layout">
           {children}
         </div>
       </MuiThemeProvider>
@@ -17,9 +23,9 @@ export default class CoreLayout extends Component {
 }
 
 CoreLayout.propTypes = {
-  children: React.PropTypes.element.isRequired
+  children: PropTypes.element.isRequired
 };
 
 CoreLayout.contextTypes = {
-  router: React.PropTypes.object
+  router: PropTypes.object
 };
