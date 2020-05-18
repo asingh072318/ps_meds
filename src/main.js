@@ -30,6 +30,7 @@ try {
 catch(e) {
     //Don't do anything
 }
+
 let render = () => {
   const App = require('./components/App').default
   const routes = require('./routes/index').default(store)
