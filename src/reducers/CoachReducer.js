@@ -8,19 +8,22 @@ const baseURL = getBaseURL();
 export default State(currentState, {
   // Initial State should be starts with the key 'initial': ...
   initial: {
-    tags: [],
-    selectedpackages: [],
-    readme: "Default Text",
-    selectedid: -1,
-    selectedindex: -1,
-    categories: [],
-    selectedTag: "",
-    search: "",
-    selectedCheckbox: [],
-    readonly: true,
-    count: 0,
-    modal: false
+      isAdmin:false,
+      address:"",
+      ownerName:"",
+      shopName:"",
+      signInError:"",
   },
+
+  setUserData(state,payload) {
+    state.isAdmin=payload.isAdmin;
+    state.address=payload.address;
+    state.ownerName=payload.ownerName;
+    state.shopName=payload.shopName;
+    console.log(state);
+    return _.cloneDeep(state);
+  },
+
   setModalVisible(state, payload) {
     state.modal = payload;
     return _.cloneDeep(state);

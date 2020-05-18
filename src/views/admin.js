@@ -3,8 +3,9 @@ import { connect } from "react-redux";
 import { Actions } from "jumpstate";
 import { browserHistory } from "react-router";
 import * as firebaseutils from "../utils/firebaseutils";
+import firebase from "firebase";
 import { withStyles } from '@material-ui/core/styles';
-
+import Button from '@material-ui/core/Button';
 // Binding the state and actions. These will be available as props to component
 const styles = theme => ({
 
@@ -19,10 +20,27 @@ class Admin extends Component {
     };
     //firebaseutils.clear_users()
   }
+
+  logout = () => {
+    firebaseutils.signOut();
+    browserHistory.push("/");
+  }
+
   render() {
     const { classes } = this.props;
     return (
-      <div>Admin Dashboard</div>
+      <div>
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        className={classes.submit}
+        onClick={() => this.logout()}
+      >
+        Admin Sign out
+      </Button>
+      </div>
     )
   }
 }

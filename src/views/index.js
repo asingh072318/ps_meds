@@ -60,21 +60,26 @@ class Index extends Component {
     this.state = {
       email: "",
       password: "",
+      loggedIn: false,
     };
     //firebaseutils.signOut();
   }
 
   componentWillReceiveProps(nextProps){
-
+    if(this.state.loggedIn && nextProps.coach.isAdmin){
+      browserHistory.push("/admin");
+    }
+    else if(this.state.loggedIn)
+      browserHistory.push("/home");
   }
   componentDidMount(){
     unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if(user){
         console.log("Logged In");
-        browserHistory.push("/home");
+        this.setState({loggedIn:true});
       }
       else{
-        console.log("Logged Out");
+        browserHistory.push("/");
       }
     })
   }

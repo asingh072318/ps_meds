@@ -12,6 +12,20 @@ function requireAuth(location, replace) {
     replace("/");
   }
 }
+function requireAdmin(location, replace) {
+  if (!firebase.auth().currentUser) {
+    replace("/");
+  }
+  else{
+    var uid = firebase.auth().currentUser.uid;
+		firebase.database().ref('users/'+uid).once('value').then(snapshot => {
+			if(!snapshot.val().isAdmin){
+        firebaseutils.signOut();
+        replace("/");
+      }
+		})
+  }
+}
 
 // bind the view components to appropriate URL path
 export default store =>
@@ -19,6 +33,6 @@ export default store =>
     <Route path="/" component={CoreLayout}>
       <IndexRoute component={Index} />
       <Route path="/home" onEnter={requireAuth} component={Home} />
-      <Route path="/admin" onEnter={requireAuth} component={Admin} />
+      <Route path="/admin" onEnter={requireAdmin} component={Admin} />
     </Route>
   </div>;
