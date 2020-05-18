@@ -53,7 +53,7 @@ const styles = theme => ({
 });
 
 // Binding the state and actions. These will be available as props to component
-
+let unsubscribe;
 class Index extends Component {
   constructor(props) {
     super(props);
@@ -67,8 +67,8 @@ class Index extends Component {
   componentWillReceiveProps(nextProps){
 
   }
-  authListener = () => {
-    this.firebaselistener = firebase.auth().onAuthStateChanged((user) => {
+  componentDidMount(){
+    unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if(user){
         console.log("Logged In");
         browserHistory.push("/home");
@@ -79,13 +79,8 @@ class Index extends Component {
     })
   }
 
-  componentDidMount(){
-    this.authListener();
-  }
-
   componentWillUnmount(){
-    this.fireBaseListener && this.fireBaseListener();
-    this.authListener = undefined;
+    unsubscribe();
   }
 
   states = (e, value) => {
