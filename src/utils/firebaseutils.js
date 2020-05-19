@@ -13,13 +13,15 @@ function create_shop(uuid,payload){
 		console.log(response);
 	})
 }
-
+function read_userdata(){
+	var uid = firebase.auth().currentUser.uid;
+	database.ref('users/'+uid).once('value').then(snapshot => {
+		Actions.TodoStateV1.setUserData(snapshot.val());
+	})
+}
 function signIn(payload){
 	firebase.auth().signInWithEmailAndPassword(payload.email, payload.password).then(response => {
-		var uid = firebase.auth().currentUser.uid;
-		database.ref('users/'+uid).once('value').then(snapshot => {
-			Actions.TodoStateV1.setUserData(snapshot.val());
-		})
+		read_userdata();
 	})
 }
 
@@ -33,5 +35,6 @@ export {
 	create_shop,
 	signOut,
 	signIn,
+	read_userdata,
 	clear_users,
 };

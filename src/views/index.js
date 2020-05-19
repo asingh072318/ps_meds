@@ -64,7 +64,11 @@ class Index extends Component {
     };
     //firebaseutils.signOut();
   }
-  
+  componentWillMount(){
+    if(firebase.auth().currentUser){
+      firebaseutils.read_userdata();
+    }
+  }
   componentWillReceiveProps(nextProps){
     if(this.state.loggedIn && nextProps.coach.isAdmin){
       browserHistory.push("/admin");
@@ -75,7 +79,6 @@ class Index extends Component {
   componentDidMount(){
     unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       if(user){
-        console.log("Logged In");
         this.setState({loggedIn:true});
       }
       else{
