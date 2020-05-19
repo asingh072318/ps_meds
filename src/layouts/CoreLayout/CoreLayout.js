@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles/';
 import PropTypes from "prop-types";
-
+import Sidebar from "../../views/sidebar";
 import "../../styles/core.scss";
 
 const theme = createMuiTheme({
@@ -14,9 +14,11 @@ export default class CoreLayout extends Component {
     let { children } = this.props;
     return (
       <MuiThemeProvider theme={theme}>
+      <Sidebar>
         <div className="core-layout">
           {children}
         </div>
+      </Sidebar>
       </MuiThemeProvider>
     );
   }
