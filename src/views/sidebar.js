@@ -7,11 +7,13 @@ import firebase from "firebase";
 import { withStyles } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -39,11 +41,17 @@ const styles = theme => ({
       marginLeft: drawerWidth,
     },
   },
+  title: {
+    flexGrow: 1,
+  },
   menuButton: {
     marginRight: theme.spacing(2),
     [theme.breakpoints.up('sm')]: {
       display: 'none',
     },
+  },
+  logoutButton:{
+    color:'white',
   },
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
@@ -64,6 +72,11 @@ class Sidebar extends Component {
       mobileOpen:false,
     };
     //firebaseutils.clear_users()
+  }
+
+  logout = () => {
+    firebaseutils.signOut();
+    browserHistory.push("/");
   }
 
   handleDrawerToggle = () => {
@@ -110,9 +123,10 @@ class Sidebar extends Component {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Responsive drawer
-          </Typography>
+          <Typography variant="h6" className={classes.title} />
+          <IconButton className={classes.logoutButton} onClick={() => this.logout()}>
+            <PowerSettingsNewIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">

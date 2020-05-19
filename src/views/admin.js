@@ -21,25 +21,11 @@ class Admin extends Component {
     //firebaseutils.clear_users()
   }
 
-  logout = () => {
-    firebaseutils.signOut();
-    browserHistory.push("/");
-  }
-
   render() {
     const { classes } = this.props;
     return (
       <div>
-      <Button
-        type="submit"
-        fullWidth
-        variant="contained"
-        color="primary"
-        className={classes.submit}
-        onClick={() => this.logout()}
-      >
-        Admin Sign out
-      </Button>
+      Admin Page
       </div>
     )
   }
