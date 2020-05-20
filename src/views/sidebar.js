@@ -7,10 +7,12 @@ import firebase from "firebase";
 import { withStyles } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
+import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
@@ -40,6 +42,7 @@ const styles = theme => ({
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
+    backgroundColor:'#282C34',
   },
   title: {
     flexGrow: 1,
@@ -51,16 +54,43 @@ const styles = theme => ({
     },
   },
   logoutButton:{
-    color:'white',
+    color:'#ADB0BB',
+    '&:hover': {
+       background: "#373B42",
+    },
   },
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
+  drawerTop:{
+    height:'200px',
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'center',
+  },
+  drawerTopText:{
+    marginTop:theme.spacing(3),
+    color:'white',
+    fontSize:'16px',
+  },
   drawerPaper: {
     width: drawerWidth,
+    backgroundColor:'#282C34',
+    color:'#ADB0BB',
+  },
+  listItem:{
+    '&:hover': {
+       background: "#373B42",
+    },
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+  },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    color:'black',
   },
 });
 
@@ -70,8 +100,12 @@ class Sidebar extends Component {
     super(props);
     this.state = {
       mobileOpen:false,
+      ownerName:"",
     };
     //firebaseutils.clear_users()
+  }
+  componentWillMount(){
+    this.setState({ownerName:this.props.coach.ownerName});
   }
 
   logout = () => {
@@ -86,22 +120,24 @@ class Sidebar extends Component {
   render() {
     const { classes, children } = this.props;
     const drawer = (
-      <div>
-        <div className={classes.toolbar} />
+      <div className={classes.drawer}>
+        <div className={classes.drawerTop}>
+          <Avatar className={classes.large}>{this.state.ownerName[0]}</Avatar>
+          <div className={classes.drawerTopText}>{this.state.ownerName}</div>
+          <div >{this.props.coach.shopName}</div>
+        </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+          {['Dashboard', 'Create Store', 'Update Inventory', 'List Stores'].map((text) => (
+            <ListItem className={classes.listItem} button key={text}>
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {['All mail', 'Trash', 'Spam'].map((text) => (
             <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}

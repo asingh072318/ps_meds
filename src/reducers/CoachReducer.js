@@ -17,9 +17,9 @@ export default State(currentState, {
 
   setUserData(state,payload) {
     state.isAdmin=payload.isAdmin;
-    state.address=payload.address;
-    state.ownerName=payload.ownerName;
-    state.shopName=payload.shopName;
+    state.address=payload.address.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    state.ownerName=payload.ownerName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    state.shopName=payload.shopName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
     console.log(state);
     return _.cloneDeep(state);
   },
