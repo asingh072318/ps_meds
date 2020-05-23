@@ -19,11 +19,13 @@ export default class CoreLayout extends Component {
     let { children } = this.props;
     return (
       <MuiThemeProvider theme={theme}>
+      <div className="outerLayout">
       <Sidebar>
         <div className="core-layout">
           {children}
         </div>
       </Sidebar>
+      </div>
       </MuiThemeProvider>
     );
   }

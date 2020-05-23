@@ -13,6 +13,9 @@ export default State(currentState, {
       ownerName:"",
       shopName:"",
       signInError:"",
+      gstNumber:"",
+      dlNumber:"",
+      gstNumber:"",
   },
 
   setUserData(state,payload) {
@@ -20,6 +23,8 @@ export default State(currentState, {
     state.address=payload.address.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
     state.ownerName=payload.ownerName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
     state.shopName=payload.shopName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    state.dlNumber=payload.dlNumber;
+    state.gstNumber=payload.gstNumber;
     console.log(state);
     return _.cloneDeep(state);
   },

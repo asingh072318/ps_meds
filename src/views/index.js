@@ -62,9 +62,8 @@ class Index extends Component {
       password: "",
       loggedIn: false,
     };
-    //firebaseutils.signOut();
   }
-  
+
   componentWillReceiveProps(nextProps){
     if(this.state.loggedIn && nextProps.coach.isAdmin){
       browserHistory.push("/admin");

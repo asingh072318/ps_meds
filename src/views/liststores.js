@@ -12,7 +12,7 @@ const styles = theme => ({
 });
 
 
-class Home extends Component {
+class Liststores extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,8 +23,8 @@ class Home extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-      HomePage
+      <div >
+      List Stores Page
       </div>
     )
   }
@@ -39,4 +39,4 @@ const mapDispatchToProps = (dispatch) => {
   return {}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Home));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Liststores));

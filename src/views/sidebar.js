@@ -102,37 +102,45 @@ class Sidebar extends Component {
       mobileOpen:false,
       ownerName:"",
     };
-    //firebaseutils.clear_users()
-  }
-  componentWillMount(){
-    this.setState({ownerName:this.props.coach.ownerName});
   }
 
   logout = () => {
     firebaseutils.signOut();
     browserHistory.push("/");
   }
-
+  gotoPage = (page) => {
+    browserHistory.push(page);
+  }
   handleDrawerToggle = () => {
     this.setState({mobileOpen:!this.state.mobileOpen});
   }
 
   render() {
     const { classes, children } = this.props;
+    var goto = this.props.coach.isAdmin ? "/admin" : "/home";
     const drawer = (
       <div className={classes.drawer}>
         <div className={classes.drawerTop}>
-          <Avatar className={classes.large}>{this.state.ownerName[0]}</Avatar>
-          <div className={classes.drawerTopText}>{this.state.ownerName}</div>
+          <Avatar className={classes.large}>{this.props.coach.ownerName[0]}</Avatar>
+          <div className={classes.drawerTopText}>{this.props.coach.ownerName}</div>
           <div >{this.props.coach.shopName}</div>
+          <div >DLNumber: {this.props.coach.dlNumber}</div>
+          <div >GSTIN: {this.props.coach.gstNumber}</div>
         </div>
         <Divider />
         <List>
-          {['Dashboard', 'Create Store', 'Update Inventory', 'List Stores'].map((text) => (
-            <ListItem className={classes.listItem} button key={text}>
-              <ListItemText primary={text} />
+            <ListItem className={classes.listItem} button key="Dashboard" onClick={() => this.gotoPage(goto)}>
+              <ListItemText primary="Dashboard" />
             </ListItem>
-          ))}
+            <ListItem className={classes.listItem} button key="Create Store">
+              <ListItemText primary="Create Store" />
+            </ListItem>
+            <ListItem className={classes.listItem} button key="Update Inventory">
+              <ListItemText primary="Update Inventory" />
+            </ListItem>
+            <ListItem className={classes.listItem} button key="List Stores" onClick={() => this.gotoPage("/liststores")}>
+              <ListItemText primary="List Stores" />
+            </ListItem>
         </List>
         <Divider />
         <List>
