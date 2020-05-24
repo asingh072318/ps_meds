@@ -65,7 +65,7 @@ class Index extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    if(this.state.loggedIn && nextProps.coach.isAdmin){
+    if(this.state.loggedIn && nextProps.coach.currentStoreDetails.isAdmin){
       browserHistory.push("/admin");
     }
     else if(this.state.loggedIn)

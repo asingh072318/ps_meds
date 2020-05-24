@@ -117,15 +117,17 @@ class Sidebar extends Component {
 
   render() {
     const { classes, children } = this.props;
-    var goto = this.props.coach.isAdmin ? "/admin" : "/home";
+    const currentStoreDetails = {...this.props.coach.currentStoreDetails};
+    console.log(currentStoreDetails);
+    var goto = currentStoreDetails.isAdmin ? "/admin" : "/home";
     const drawer = (
       <div className={classes.drawer}>
         <div className={classes.drawerTop}>
-          <Avatar className={classes.large}>{this.props.coach.ownerName[0]}</Avatar>
-          <div className={classes.drawerTopText}>{this.props.coach.ownerName}</div>
-          <div >{this.props.coach.shopName}</div>
-          <div >DLNumber: {this.props.coach.dlNumber}</div>
-          <div >GSTIN: {this.props.coach.gstNumber}</div>
+          <Avatar className={classes.large}>{currentStoreDetails.ownerName[0]}</Avatar>
+          <div className={classes.drawerTopText}>{currentStoreDetails.ownerName}</div>
+          <div >{currentStoreDetails.shopName}</div>
+          <div >DLNumber: {currentStoreDetails.dlNumber}</div>
+          <div >GSTIN: {currentStoreDetails.gstNumber}</div>
         </div>
         <Divider />
         <List>

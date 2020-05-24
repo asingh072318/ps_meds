@@ -7,16 +7,25 @@ function clear_users(){
 	database.ref('users').remove()
 }
 
+function read_allusers(){
+	database.ref('users').once('value').then(snapshot =>{
+		let payload = snapshot.val();
+		Actions.TodoStateV1.setAllUsers(payload);
+	})
+}
+
 function create_shop(uuid,payload){
 	var usersRef = database.ref('users/' + uuid);
 	usersRef.set(payload).then(response => {
-		console.log(response);
+		read_allusers();
 	})
 }
 function read_userdata(){
 	var uid = firebase.auth().currentUser.uid;
 	database.ref('users/'+uid).once('value').then(snapshot => {
-		Actions.TodoStateV1.setUserData(snapshot.val());
+		let payload = {...snapshot.val()};
+		payload["uuid"] = uid;
+		Actions.TodoStateV1.setUserData(payload);
 	})
 }
 function signIn(payload){
@@ -41,6 +50,7 @@ function signOut(){
 
 export {
 	create_shop,
+	read_allusers,
 	signOut,
 	signIn,
 	read_userdata,

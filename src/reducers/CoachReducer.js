@@ -8,27 +8,34 @@ const baseURL = getBaseURL();
 export default State(currentState, {
   // Initial State should be starts with the key 'initial': ...
   initial: {
-      isAdmin:false,
-      address:"",
-      ownerName:"",
-      shopName:"",
       signInError:"",
-      gstNumber:"",
-      dlNumber:"",
-      gstNumber:"",
+      currentStoreDetails:{
+        uuid:"",
+        address:"",
+        dlNumber:"",
+        gstNumber:"",
+        isAdmin:false,
+        ownerName:"",
+        shopName:"",
+      },
+      allUsers:{},
   },
 
   setUserData(state,payload) {
-    state.isAdmin=payload.isAdmin;
-    state.address=payload.address.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-    state.ownerName=payload.ownerName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-    state.shopName=payload.shopName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-    state.dlNumber=payload.dlNumber;
-    state.gstNumber=payload.gstNumber;
-    console.log(state);
+    console.log(payload);
+    state.currentStoreDetails.uuid=payload.uuid;
+    state.currentStoreDetails.isAdmin=payload.isAdmin;
+    state.currentStoreDetails.address=payload.address.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    state.currentStoreDetails.ownerName=payload.ownerName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    state.currentStoreDetails.shopName=payload.shopName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    state.currentStoreDetails.dlNumber=payload.dlNumber;
+    state.currentStoreDetails.gstNumber=payload.gstNumber;
     return _.cloneDeep(state);
   },
-
+  setAllUsers(state,payload){
+    state.allUsers=payload;
+    return _.cloneDeep(state);
+  },
   setModalVisible(state, payload) {
     state.modal = payload;
     return _.cloneDeep(state);
