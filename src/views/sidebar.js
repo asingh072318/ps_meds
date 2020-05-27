@@ -10,6 +10,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Clock from 'react-live-clock';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
@@ -170,6 +171,7 @@ class Sidebar extends Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title} />
+          <Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Kolkata'} />
           <IconButton className={classes.logoutButton} onClick={() => this.logout()}>
             <PowerSettingsNewIcon />
           </IconButton>
