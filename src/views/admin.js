@@ -79,7 +79,26 @@ class Admin extends Component {
         ownerName:"",
         shopName:"",
       },
+      allUsers:{},
     };
+  }
+  componentWillReceiveProps(nextProps){
+    if(this.state.allUsers !== nextProps.coach.allUsers){
+      console.log("Inside it")
+      var clearStoreDetails = {
+        uuid:"",
+        address:"",
+        dlNumber:"",
+        gstNumber:"",
+        isAdmin:false,
+        ownerName:"",
+        shopName:"",
+      }
+      this.setState({
+        allUsers:nextProps.coach.allUsers,
+        newStoreDetails:clearStoreDetails
+      })
+    }
   }
   componentWillMount(){
     firebaseutils.read_allusers();
@@ -100,7 +119,8 @@ class Admin extends Component {
     firebaseutils.create_shop(this.state.newStoreDetails.uuid,payload);
   }
   render() {
-    console.log(this.props.coach.allUsers);
+    //console.log(this.props.coach.allUsers);
+    console.log(this.state)
     const { classes } = this.props;
     return (
       <div className={classes.rootpage}>
@@ -117,15 +137,15 @@ class Admin extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.keys(this.props.coach.allUsers).map((row) => (
-                  <TableRow key={this.props.coach.allUsers[row].shopName}>
+                {Object.keys(this.state.allUsers).map((row) => (
+                  <TableRow key={this.state.allUsers[row].shopName}>
                     <TableCell component="th" scope="row">
-                      {this.props.coach.allUsers[row].ownerName}
+                      {this.state.allUsers[row].ownerName}
                     </TableCell>
-                    <TableCell align="center">{this.props.coach.allUsers[row].shopName}</TableCell>
-                    <TableCell align="center">{this.props.coach.allUsers[row].gstNumber}</TableCell>
-                    <TableCell align="center">{this.props.coach.allUsers[row].dlNumber}</TableCell>
-                    <TableCell align="center">{this.props.coach.allUsers[row].address}</TableCell>
+                    <TableCell align="center">{this.state.allUsers[row].shopName}</TableCell>
+                    <TableCell align="center">{this.state.allUsers[row].gstNumber}</TableCell>
+                    <TableCell align="center">{this.state.allUsers[row].dlNumber}</TableCell>
+                    <TableCell align="center">{this.state.allUsers[row].address}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -150,7 +170,7 @@ class Admin extends Component {
               name="uuid"
               autoComplete="UUID"
               autoFocus
-              value={this.state.uuid}
+              value={this.state.newStoreDetails.uuid}
               onChange={event => this.states(event)}
             />
             <TextField
@@ -162,7 +182,7 @@ class Admin extends Component {
               label="ADDRESS"
               name="address"
               autoComplete="Address"
-              value={this.state.address}
+              value={this.state.newStoreDetails.address}
               onChange={event => this.states(event)}
             />
             <TextField
@@ -174,7 +194,7 @@ class Admin extends Component {
               label="Drug License Number"
               name="dlNumber"
               autoComplete="Drug License Number"
-              value={this.state.dlNumber}
+              value={this.state.newStoreDetails.dlNumber}
               onChange={event => this.states(event)}
             />
             <TextField
@@ -186,7 +206,7 @@ class Admin extends Component {
               label="GST Number"
               name="gstNumber"
               autoComplete="GST Number"
-              value={this.state.gstNumber}
+              value={this.state.newStoreDetails.gstNumber}
               onChange={event => this.states(event)}
             />
             <TextField
@@ -198,7 +218,7 @@ class Admin extends Component {
               label="Owner Name"
               name="ownerName"
               autoComplete="Owner Name"
-              value={this.state.ownerName}
+              value={this.state.newStoreDetails.ownerName}
               onChange={event => this.states(event)}
             />
             <TextField
@@ -210,7 +230,7 @@ class Admin extends Component {
               label="Shop Name"
               name="shopName"
               autoComplete="Shop Name"
-              value={this.state.shopName}
+              value={this.state.newStoreDetails.shopName}
               onChange={event => this.states(event)}
             />
           </div>
