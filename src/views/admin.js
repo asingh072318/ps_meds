@@ -84,7 +84,6 @@ class Admin extends Component {
   }
   componentWillReceiveProps(nextProps){
     if(this.state.allUsers !== nextProps.coach.allUsers){
-      console.log("Inside it")
       var clearStoreDetails = {
         uuid:"",
         address:"",
