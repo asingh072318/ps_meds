@@ -15,7 +15,7 @@ function read_allusers(){
 	})
 }
 function search_meds(payload){
-	var search_string = "*"+payload+"*";
+	var search_string =payload+"*";
 	var settings = {
   url: "http://localhost:9200/medicine-db/medicine/_search?size=25&pretty=true",
   method: "POST",
@@ -23,7 +23,15 @@ function search_meds(payload){
 		"Access-Control-Allow-Origin": "*",
 		"content-type": "application/json",
   },
-  data: JSON.stringify({"query":{"match":{"display_name":search_string}}}),
+  data: JSON.stringify({
+	"query":{
+		"query_string":{
+			 "fields":["display_name"],
+			 "query":search_string,
+			 "default_operator":"AND"
+		 }
+	}
+}),
 	success: function(response) {
 		var data = response.hits.hits;
 		Actions.TodoStateV1.setSearchData(data);
@@ -32,7 +40,6 @@ function search_meds(payload){
     console.log("error response is ", response);
   }
 	};
-	console.log('doing network call')
 	$.ajax(settings)
 }
 function create_shop(uuid,payload){
