@@ -1,5 +1,6 @@
 import firebase from "firebase";
 import { Actions } from "jumpstate";
+import $ from "jquery";
 
 var database = firebase.database();
 
@@ -13,7 +14,27 @@ function read_allusers(){
 		Actions.TodoStateV1.setAllUsers(payload);
 	})
 }
-
+function search_meds(payload){
+	var search_string = "*"+payload+"*";
+	var settings = {
+  url: "http://localhost:9200/medicine-db/medicine/_search?size=25&pretty=true",
+  method: "POST",
+  headers: {
+		"Access-Control-Allow-Origin": "*",
+		"content-type": "application/json",
+  },
+  data: JSON.stringify({"query":{"match":{"display_name":search_string}}}),
+	success: function(response) {
+		var data = response.hits.hits;
+		Actions.TodoStateV1.setSearchData(data);
+	},
+	error: function(response) {
+    console.log("error response is ", response);
+  }
+	};
+	console.log('doing network call')
+	$.ajax(settings)
+}
 function create_shop(uuid,payload){
 	var usersRef = database.ref('users/' + uuid);
 	usersRef.set(payload).then(response => {
@@ -49,6 +70,7 @@ function signOut(){
 
 
 export {
+	search_meds,
 	create_shop,
 	read_allusers,
 	signOut,

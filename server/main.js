@@ -5,9 +5,10 @@ const logger = require('../build/lib/logger')
 const webpackConfig = require('../build/webpack.config')
 const project = require('../project.config')
 const compress = require('compression')
-
+var cors = require('cors')
 const app = express()
 app.use(compress())
+app.use(cors())
 
 // ------------------------------------
 // Apply Webpack HMR Middleware

@@ -101,10 +101,13 @@ class Liststores extends Component {
       newObj['uuid']=key;
       allUsersarray.push(allUsers[key]);
     });
+    console.log('allUsersarray',allUsersarray);
+    console.log('searchresultarray',nextProps.coach.searchData);
     this.setState({allUsers:allUsersarray});
   }
   componentWillMount(){
     firebaseutils.read_allusers();
+    firebaseutils.search_meds("a");
   }
 
   selectedStore = (newValue) => {
@@ -146,25 +149,41 @@ class Liststores extends Component {
           <Table className={classes.table} aria-label="spanning table">
             <TableHead>
               <TableRow>
-                <TableCell align="center" colSpan={3}>
-                  Details
-                </TableCell>
-                <TableCell align="right">Price</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Desc</TableCell>
-                <TableCell align="right">Qty.</TableCell>
-                <TableCell align="right">Unit</TableCell>
-                <TableCell align="right">Sum</TableCell>
+                <TableCell>Serial Number</TableCell>
+                <TableCell align="center">Product Name</TableCell>
+                <TableCell align="center">Pack</TableCell>
+                <TableCell align="center">MFG</TableCell>
+                <TableCell align="center">Batch Number</TableCell>
+                <TableCell align="center">Expiry</TableCell>
+                <TableCell align="center">Qty</TableCell>
+                <TableCell align="center">Free</TableCell>
+                <TableCell align="center">MRP</TableCell>
+                <TableCell align="center">Rate</TableCell>
+                <TableCell align="center">Disc(%)</TableCell>
+                <TableCell align="center">Taxable</TableCell>
+                <TableCell align="center">CGST(%)</TableCell>
+                <TableCell align="center">SGST(%)</TableCell>
+                <TableCell align="center">IGST(%)</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {rows.map((row,index) => (
                 <TableRow key={row.desc}>
-                  <TableCell>{row.desc}</TableCell>
-                  <TableCell align="right">{row.qty}</TableCell>
-                  <TableCell align="right">{row.unit}</TableCell>
-                  <TableCell align="right">{ccyFormat(row.price)}</TableCell>
+                  <TableCell>{index+1}</TableCell>
+                  <TableCell align="center">
+                    <Autocomplete
+                      id="search-medicine"
+                      disableClearable
+                      onChange={(event, newValue) => this.selectedStore(newValue)}
+                      onInputChange={(event,searchstring) => firebaseutils.search_meds(searchstring)}
+                      options={this.props.coach.searchData}
+                      getOptionLabel={(option) => option.display_name}
+                      style={{ width: 300 }}
+                      renderInput={(params) => <TextField {...params} label="Select Medicine" variant="outlined" />}
+                    />
+                  </TableCell>
+                  <TableCell align="center">{row.unit}</TableCell>
+                  <TableCell align="center">{ccyFormat(row.price)}</TableCell>
                 </TableRow>
               ))}
 

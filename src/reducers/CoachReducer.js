@@ -19,10 +19,26 @@ export default State(currentState, {
         shopName:"",
       },
       allUsers:{},
+      searchData:[],
   },
 
+
+  setSearchData(state,payload){
+      console.log('Setting SearchData',payload);
+      var finalPayload = [];
+      for(var i=0;i<payload.length;i++){
+        finalPayload.push(payload[i]["_source"]);
+      }
+      state.searchData=finalPayload;
+      return _.cloneDeep(state);
+  },
+
+
+
+
+
   setUserData(state,payload) {
-    console.log(payload);
+    console.log('setUserData',payload);
     state.currentStoreDetails.uuid=payload.uuid;
     state.currentStoreDetails.isAdmin=payload.isAdmin;
     state.currentStoreDetails.address=payload.address.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -33,6 +49,7 @@ export default State(currentState, {
     return _.cloneDeep(state);
   },
   setAllUsers(state,payload){
+    console.log('setAllUsers',payload)
     state.allUsers=payload;
     return _.cloneDeep(state);
   },
