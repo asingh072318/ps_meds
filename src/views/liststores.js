@@ -42,7 +42,15 @@ const styles = theme => ({
   },
   topPurchase:{
     maxWidth:'80vw',
-    height:'90px',
+    height:'80vh',
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    flexWrap:'wrap',
+  },
+  purchaseTopDiv:{
+    width:'100%',
     display:'flex',
     flexDirection:'row',
     justifyContent:'space-between',
@@ -51,6 +59,7 @@ const styles = theme => ({
   },
   table: {
     maxWidth:'80vw',
+    overflow:'scroll',
   },
 });
 function ccyFormat(num) {
@@ -86,6 +95,7 @@ class Liststores extends Component {
     super(props);
     this.state = {
       allUsers:[],
+      searchData:[],
       selectedUser:{
         uuid:"",
         gstNumber:"",
@@ -101,8 +111,8 @@ class Liststores extends Component {
       newObj['uuid']=key;
       allUsersarray.push(allUsers[key]);
     });
-    console.log('allUsersarray',allUsersarray);
-    console.log('searchresultarray',nextProps.coach.searchData);
+    //console.log('allUsersarray',allUsersarray);
+    //console.log('searchresultarray',nextProps.coach.searchData);
     this.setState({allUsers:allUsersarray});
   }
   componentWillMount(){
@@ -131,79 +141,84 @@ class Liststores extends Component {
         <div>
           <Card>
             <CardContent className={classes.topPurchase}>
-              <Autocomplete
-                id="search-store"
-                disableClearable
-                onChange={(event, newValue) => this.selectedStore(newValue)}
-                options={this.state.allUsers}
-                getOptionLabel={(option) => option.shopName}
-                style={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
-              />
-              <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
-              <div>DL: {this.state.selectedUser.dlNumber}</div>
+              <div className={classes.purchaseTopDiv}>
+                  <Autocomplete
+                    id="search-store"
+                    disableClearable
+                    onChange={(event, newValue) => this.selectedStore(newValue)}
+                    options={this.state.allUsers}
+                    getOptionLabel={(option) => option.shopName}
+                    style={{ width: 300 }}
+                    renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
+                  />
+                  <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
+                  <div>DL: {this.state.selectedUser.dlNumber}</div>
+              </div>
+              <div className={classes.table}>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="spanning table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Serial Number</TableCell>
+                          <TableCell align="center">Product Name</TableCell>
+                          <TableCell align="center">Pack</TableCell>
+                          <TableCell align="center">MFG</TableCell>
+                          <TableCell align="center">Batch Number</TableCell>
+                          <TableCell align="center">Expiry</TableCell>
+                          <TableCell align="center">Qty</TableCell>
+                          <TableCell align="center">Free</TableCell>
+                          <TableCell align="center">MRP</TableCell>
+                          <TableCell align="center">Rate</TableCell>
+                          <TableCell align="center">Disc(%)</TableCell>
+                          <TableCell align="center">Taxable</TableCell>
+                          <TableCell align="center">CGST(%)</TableCell>
+                          <TableCell align="center">SGST(%)</TableCell>
+                          <TableCell align="center">IGST(%)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row,index) => (
+                          <TableRow key={row.desc}>
+                            <TableCell>{index+1}</TableCell>
+                            <TableCell align="center">
+                              <Autocomplete
+                                id="search-medicine"
+                                disableClearable
+                                onInputChange={(event,searchstring) => firebaseutils.search_meds(searchstring)}
+                                options={this.props.coach.searchData}
+                                getOptionLabel={(option) => option.display_name}
+                                style={{ width: 300 }}
+                                renderInput={params => {
+                                  return <TextField {...params} label="Select Medicine" variant="outlined" />;
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell align="center">{row.unit}</TableCell>
+                            <TableCell align="center">{ccyFormat(row.price)}</TableCell>
+                          </TableRow>
+                        ))}
+
+                        <TableRow>
+                          <TableCell rowSpan={3} />
+                          <TableCell colSpan={2}>Subtotal</TableCell>
+                          <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Tax</TableCell>
+                          <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
+                          <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell colSpan={2}>Total</TableCell>
+                          <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+              </div>
             </CardContent>
           </Card>
         </div>
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="spanning table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Serial Number</TableCell>
-                <TableCell align="center">Product Name</TableCell>
-                <TableCell align="center">Pack</TableCell>
-                <TableCell align="center">MFG</TableCell>
-                <TableCell align="center">Batch Number</TableCell>
-                <TableCell align="center">Expiry</TableCell>
-                <TableCell align="center">Qty</TableCell>
-                <TableCell align="center">Free</TableCell>
-                <TableCell align="center">MRP</TableCell>
-                <TableCell align="center">Rate</TableCell>
-                <TableCell align="center">Disc(%)</TableCell>
-                <TableCell align="center">Taxable</TableCell>
-                <TableCell align="center">CGST(%)</TableCell>
-                <TableCell align="center">SGST(%)</TableCell>
-                <TableCell align="center">IGST(%)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row,index) => (
-                <TableRow key={row.desc}>
-                  <TableCell>{index+1}</TableCell>
-                  <TableCell align="center">
-                    <Autocomplete
-                      id="search-medicine"
-                      disableClearable
-                      onChange={(event, newValue) => this.selectedStore(newValue)}
-                      onInputChange={(event,searchstring) => firebaseutils.search_meds(searchstring)}
-                      options={this.props.coach.searchData}
-                      getOptionLabel={(option) => option.display_name}
-                      style={{ width: 300 }}
-                      renderInput={(params) => <TextField {...params} label="Select Medicine" variant="outlined" />}
-                    />
-                  </TableCell>
-                  <TableCell align="center">{row.unit}</TableCell>
-                  <TableCell align="center">{ccyFormat(row.price)}</TableCell>
-                </TableRow>
-              ))}
-
-              <TableRow>
-                <TableCell rowSpan={3} />
-                <TableCell colSpan={2}>Subtotal</TableCell>
-                <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Tax</TableCell>
-                <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
-                <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={2}>Total</TableCell>
-                <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
       </div>
     )
   }

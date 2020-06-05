@@ -24,11 +24,11 @@ export default State(currentState, {
 
 
   setSearchData(state,payload){
-      console.log('Setting SearchData',payload);
       var finalPayload = [];
       for(var i=0;i<payload.length;i++){
         finalPayload.push(payload[i]["_source"]);
       }
+      console.log(finalPayload);
       state.searchData=finalPayload;
       return _.cloneDeep(state);
   },
@@ -49,7 +49,7 @@ export default State(currentState, {
     return _.cloneDeep(state);
   },
   setAllUsers(state,payload){
-    console.log('setAllUsers',payload)
+    //console.log('setAllUsers',payload)
     state.allUsers=payload;
     return _.cloneDeep(state);
   },
@@ -58,7 +58,7 @@ export default State(currentState, {
     return _.cloneDeep(state);
   },
   topSearch(state, payload) {
-    console.log(payload);
+    //console.log(payload);
     return _.cloneDeep(state);
   },
   setCount(state, payload) {

@@ -119,7 +119,7 @@ class Sidebar extends Component {
   render() {
     const { classes, children } = this.props;
     const currentStoreDetails = {...this.props.coach.currentStoreDetails};
-    console.log(currentStoreDetails);
+    //console.log(currentStoreDetails);
     var goto = currentStoreDetails.isAdmin ? "/admin" : "/home";
     const drawer = (
       <div className={classes.drawer}>

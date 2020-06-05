@@ -15,7 +15,8 @@ function read_allusers(){
 	})
 }
 function search_meds(payload){
-	var search_string =payload+"*";
+	var search_string =payload.split(" ").join("* ")+"*";
+	console.log(search_string)
 	var settings = {
   url: "http://localhost:9200/medicine-db/medicine/_search?size=25&pretty=true",
   method: "POST",
@@ -34,6 +35,7 @@ function search_meds(payload){
 }),
 	success: function(response) {
 		var data = response.hits.hits;
+		console.log('calling reducer');
 		Actions.TodoStateV1.setSearchData(data);
 	},
 	error: function(response) {
