@@ -63,13 +63,13 @@ class Autocomplete extends Component {
   }
 
   handleClick(item) {
-    console.log("called handleClick");
+    console.log('handleClick');
     const { optionsLabel } = this.props;
-    this.setState({open:false,value:item ? item[optionsLabel]: ""});
+    this.setState({open:false,value:item[optionsLabel]});
   }
 
   handleClickAway = () => {
-    console.log('handleClickAway called');
+    console.log('handleClickAway');
     this.setState({open:false});
   }
   render() {
