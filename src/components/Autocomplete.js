@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Popper from '@material-ui/core/Popper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 const styles = theme => ({
   rootpage:{
@@ -62,30 +63,37 @@ class Autocomplete extends Component {
   }
 
   handleClick(item) {
+    console.log("called handleClick");
     const { optionsLabel } = this.props;
-    this.setState({open:false,value:item[optionsLabel]});
+    this.setState({open:false,value:item ? item[optionsLabel]: ""});
   }
 
+  handleClickAway = () => {
+    console.log('handleClickAway called');
+    this.setState({open:false});
+  }
   render() {
     const { classes, label, id } = this.props;
     return (
-      <div className = {classes.rootpage}>
-        <TextField
-          onChange={(e) => this.handleChange(e)}
-          fullWidth
-          onFocus={(e)=>this.setState({open:true,anchorEl:e.currentTarget,value:""})}
-          value={this.state.value}
-          id={id}
-          label={label}
-        />
-        <Popper
-          open={this.state.open}
-          anchorEl={this.state.anchorEl}
-          placement="bottom-start"
-          children={()=>this.renderSuggestions()
-        }>
-        </Popper>
-      </div>
+      <ClickAwayListener onClickAway={this.handleClickAway}>
+        <div className = {classes.rootpage}>
+          <TextField
+            onChange={(e) => this.handleChange(e)}
+            fullWidth
+            onFocus={(e)=>this.setState({open:true,anchorEl:e.currentTarget,value:""})}
+            value={this.state.value}
+            id={id}
+            label={label}
+          />
+          <Popper
+            open={this.state.open}
+            anchorEl={this.state.anchorEl}
+            placement="bottom-start"
+            children={()=>this.renderSuggestions()
+          }>
+          </Popper>
+        </div>
+      </ClickAwayListener>
     )
   }
 }
