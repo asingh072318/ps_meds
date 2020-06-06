@@ -45,31 +45,45 @@ class Autocomplete extends Component {
     }
     return(
       <div className={classes.parentList}>
-        {options.map((item,key)=>
-           <div onClick={(item) => this.handleClick(item)} className={classes.eachList}>
-              {item[optionsLabel]}
-           </div>
-         )}
+        {options.map((item,index)=>{
+          return(
+            <div key={index} onClick={() => this.handleClick(item)} className={classes.eachList}>
+               {item[optionsLabel]}
+            </div>
+          );
+        })}
       </div>
-
     );
   }
 
-  handleChange (e){
+  handleChange(e){
       this.setState({value:e.target.value});
       this.props.onChange(e.target.value);
   }
 
-  handleClick(item){
-    console.log('hello',item);
+  handleClick(item) {
+    const { optionsLabel } = this.props;
+    this.setState({open:false,value:item[optionsLabel]});
   }
 
   render() {
     const { classes, label, id } = this.props;
     return (
       <div className = {classes.rootpage}>
-        <TextField onChange={(e) => this.handleChange(e)} fullWidth onFocus={(e)=>this.setState({open:true,anchorEl:e.currentTarget})} onBlur={()=>this.setState({open:false})} value={this.state.value} id={id} label={label} />
-        <Popper open={this.state.open} anchorEl={this.state.anchorEl} placement="bottom-start" children={()=>this.renderSuggestions()}>
+        <TextField
+          onChange={(e) => this.handleChange(e)}
+          fullWidth
+          onFocus={(e)=>this.setState({open:true,anchorEl:e.currentTarget,value:""})}
+          value={this.state.value}
+          id={id}
+          label={label}
+        />
+        <Popper
+          open={this.state.open}
+          anchorEl={this.state.anchorEl}
+          placement="bottom-start"
+          children={()=>this.renderSuggestions()
+        }>
         </Popper>
       </div>
     )
