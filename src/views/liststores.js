@@ -12,6 +12,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Dropdown from '../components/Dropdown';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -19,6 +20,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 // Binding the state and actions. These will be available as props to component
 
 
@@ -29,9 +33,15 @@ const styles = theme => ({
     width:'100%',
     justifyContent:'space-between',
   },
+  fab: {
+    margin: theme.spacing(1),
+  },
   pageIndicator: {
     color:'white',
     fontSize:'24px',
+  },
+  AutoComplete:{
+    width:'300px',
   },
   billSection:{
     marginTop:theme.spacing(2),
@@ -61,6 +71,13 @@ const styles = theme => ({
     maxWidth:'80vw',
     overflow:'scroll',
   },
+  eachTextfield:{
+    width:'90px',
+  },
+  options:{
+    display:'flex',
+    flexDirection:'row',
+  },
 });
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
@@ -82,6 +99,9 @@ function subtotal(items) {
 const rows = [
   createRow('Paperclips (Box)', 100, 1.15),
   createRow('Paper (Case)', 10, 45.99),
+  createRow('Waste Basket', 2, 17.99),
+  createRow('Waste Basket', 2, 17.99),
+  createRow('Waste Basket', 2, 17.99),
   createRow('Waste Basket', 2, 17.99),
 ];
 
@@ -174,27 +194,65 @@ class Liststores extends Component {
                           <TableCell align="center">CGST(%)</TableCell>
                           <TableCell align="center">SGST(%)</TableCell>
                           <TableCell align="center">IGST(%)</TableCell>
+                          <TableCell align="center">Option</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {rows.map((row,index) => (
                           <TableRow key={row.desc}>
                             <TableCell>{index+1}</TableCell>
-                            <TableCell align="center">
-                              <Autocomplete
-                                id="search-medicine"
-                                disableClearable
-                                onInputChange={(event,searchstring) => firebaseutils.search_meds(searchstring)}
-                                options={this.props.coach.searchData}
-                                getOptionLabel={(option) => option.display_name}
-                                style={{ width: 300 }}
-                                renderInput={params => {
-                                  return <TextField {...params} label="Select Medicine" variant="outlined" />;
-                                }}
-                              />
+                            <TableCell>
+                              <div className={classes.AutoComplete}>
+                                <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
+                              </div>
                             </TableCell>
-                            <TableCell align="center">{row.unit}</TableCell>
-                            <TableCell align="center">{ccyFormat(row.price)}</TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="Pack Size"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="Manufacturer"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="Batch"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="Expiry"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="QTY"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="Free"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="MRP"/>
+                            </TableCell>
+                            <TableCell>
+                                <TextField className={classes.eachTextfield}label="Rate"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="Disc"/>
+                            </TableCell>
+                            <TableCell>
+                                <TextField className={classes.eachTextfield}label="Taxable"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="CGST"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="SGST"/>
+                            </TableCell>
+                            <TableCell >
+                                <TextField className={classes.eachTextfield}label="IGST"/>
+                            </TableCell>
+                            <TableCell className={classes.options} >
+                              <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
+                                <AddIcon />
+                              </Fab>
+                              <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
+                                <DeleteIcon />
+                              </Fab>
+                            </TableCell>
                           </TableRow>
                         ))}
 

@@ -5,7 +5,7 @@ import { browserHistory } from "react-router";
 import * as firebaseutils from "../utils/firebaseutils";
 import firebase from "firebase";
 import { withStyles } from '@material-ui/core/styles';
-import Autocomplete from '../components/Autocomplete';
+import Dropdown from '../components/Dropdown';
 // Binding the state and actions. These will be available as props to component
 const styles = theme => ({
   rootpage:{
@@ -27,8 +27,8 @@ class Home extends Component {
     const { classes } = this.props;
     return (
       <div className = {classes.rootpage}>
-        <Autocomplete id="1" onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="search_meds"  />
-        <Autocomplete id="2" onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="search_meds"/>
+        <Dropdown id="1" onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="search_meds"  />
+        <Dropdown id="2" onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="search_meds"/>
       </div>
     )
   }

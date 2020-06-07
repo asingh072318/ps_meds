@@ -26,7 +26,7 @@ const styles = theme => ({
     }
   },
   popper:{
-    width:'20%',
+    width:'280px',
     zIndex:'50',
     border:'solid #f8f8ff',
     borderRadius:'10px',
@@ -39,7 +39,7 @@ const styles = theme => ({
 });
 
 
-class AutoComplete extends Component {
+class Dropdown extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -129,4 +129,4 @@ class AutoComplete extends Component {
   }
 }
 
-export default withStyles(styles)(AutoComplete);
+export default withStyles(styles)(Dropdown);
