@@ -23,6 +23,8 @@ import Paper from '@material-ui/core/Paper';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 // Binding the state and actions. These will be available as props to component
 
 
@@ -31,14 +33,25 @@ const styles = theme => ({
     display:'flex',
     flexDirection:'column',
     width:'100%',
-    justifyContent:'space-between',
+    height:'85vh',
+    flexGrow:'1',
   },
-  fab: {
-    margin: theme.spacing(1),
-  },
-  pageIndicator: {
+  header: {
+    flex:'1',
     color:'white',
     fontSize:'24px',
+  },
+  body:{
+    flex:'15',
+  },
+  footerNotice: {
+    flex:'1',
+    color:'white',
+    textAlign:'center',
+    fontSize:'24px',
+  },
+  fab: {
+    margin: theme.spacing(2),
   },
   AutoComplete:{
     width:'300px',
@@ -69,6 +82,7 @@ const styles = theme => ({
   },
   table: {
     maxWidth:'80vw',
+    maxHeight:'80vh',
     overflow:'scroll',
   },
   eachTextfield:{
@@ -77,6 +91,12 @@ const styles = theme => ({
   options:{
     display:'flex',
     flexDirection:'row',
+  },
+  footer:{
+    width:'100%',
+    height:'50px',
+    backgroundColor:'red',
+    textAlign:'center',
   },
 });
 function ccyFormat(num) {
@@ -96,13 +116,22 @@ function subtotal(items) {
   return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
 }
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="white" align="center">
+      {'Copyright © '}
+      <Link color="inherit" >
+        Prem Shree Medicines
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
 const rows = [
   createRow('Paperclips (Box)', 100, 1.15),
   createRow('Paper (Case)', 10, 45.99),
-  createRow('Waste Basket', 2, 17.99),
-  createRow('Waste Basket', 2, 17.99),
-  createRow('Waste Basket', 2, 17.99),
-  createRow('Waste Basket', 2, 17.99),
 ];
 
 const invoiceSubtotal = subtotal(rows);
@@ -157,126 +186,124 @@ class Liststores extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.rootpage}>
-        <div className={classes.pageIndicator}>Purchase</div>
-        <div>
-          <Card>
-            <CardContent className={classes.topPurchase}>
-              <div className={classes.purchaseTopDiv}>
-                  <Autocomplete
-                    id="search-store"
-                    disableClearable
-                    onChange={(event, newValue) => this.selectedStore(newValue)}
-                    options={this.state.allUsers}
-                    getOptionLabel={(option) => option.shopName}
-                    style={{ width: 300 }}
-                    renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
-                  />
-                  <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
-                  <div>DL: {this.state.selectedUser.dlNumber}</div>
-              </div>
-              <div className={classes.table}>
-                  <TableContainer component={Paper}>
-                    <Table aria-label="spanning table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Serial Number</TableCell>
-                          <TableCell align="center">Product Name</TableCell>
-                          <TableCell align="center">Pack</TableCell>
-                          <TableCell align="center">MFG</TableCell>
-                          <TableCell align="center">Batch Number</TableCell>
-                          <TableCell align="center">Expiry</TableCell>
-                          <TableCell align="center">Qty</TableCell>
-                          <TableCell align="center">Free</TableCell>
-                          <TableCell align="center">MRP</TableCell>
-                          <TableCell align="center">Rate</TableCell>
-                          <TableCell align="center">Disc(%)</TableCell>
-                          <TableCell align="center">Taxable</TableCell>
-                          <TableCell align="center">CGST(%)</TableCell>
-                          <TableCell align="center">SGST(%)</TableCell>
-                          <TableCell align="center">IGST(%)</TableCell>
-                          <TableCell align="center">Option</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rows.map((row,index) => (
-                          <TableRow key={row.desc}>
-                            <TableCell>{index+1}</TableCell>
-                            <TableCell>
-                              <div className={classes.AutoComplete}>
-                                <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
-                              </div>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="Pack Size"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="Manufacturer"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="Batch"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="Expiry"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="QTY"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="Free"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="MRP"/>
-                            </TableCell>
-                            <TableCell>
-                                <TextField className={classes.eachTextfield}label="Rate"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="Disc"/>
-                            </TableCell>
-                            <TableCell>
-                                <TextField className={classes.eachTextfield}label="Taxable"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="CGST"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="SGST"/>
-                            </TableCell>
-                            <TableCell >
-                                <TextField className={classes.eachTextfield}label="IGST"/>
-                            </TableCell>
-                            <TableCell className={classes.options} >
-                              <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
-                                <AddIcon />
-                              </Fab>
-                              <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
-                                <DeleteIcon />
-                              </Fab>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+      <Card>
+        <CardContent className={classes.topPurchase}>
+          <div className={classes.purchaseTopDiv}>
+              <Autocomplete
+                id="search-store"
+                disableClearable
+                onChange={(event, newValue) => this.selectedStore(newValue)}
+                options={this.state.allUsers}
+                getOptionLabel={(option) => option.shopName}
+                style={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
+              />
+              <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
+              <div>DL: {this.state.selectedUser.dlNumber}</div>
+          </div>
+          <div className={classes.table}>
+              <TableContainer component={Paper}>
+                <Table aria-label="spanning table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Serial Number</TableCell>
+                      <TableCell align="center">Product Name</TableCell>
+                      <TableCell align="center">Pack</TableCell>
+                      <TableCell align="center">MFG</TableCell>
+                      <TableCell align="center">Batch Number</TableCell>
+                      <TableCell align="center">Expiry</TableCell>
+                      <TableCell align="center">Qty</TableCell>
+                      <TableCell align="center">Free</TableCell>
+                      <TableCell align="center">MRP</TableCell>
+                      <TableCell align="center">Rate</TableCell>
+                      <TableCell align="center">Disc(%)</TableCell>
+                      <TableCell align="center">Taxable</TableCell>
+                      <TableCell align="center">CGST(%)</TableCell>
+                      <TableCell align="center">SGST(%)</TableCell>
+                      <TableCell align="center">IGST(%)</TableCell>
+                      <TableCell align="center">Option</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row,index) => (
+                      <TableRow key={row.desc}>
+                        <TableCell>{index+1}</TableCell>
+                        <TableCell>
+                          <div className={classes.AutoComplete}>
+                            <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
+                          </div>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="Pack Size"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="Manufacturer"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="Batch"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="Expiry"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="QTY"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="Free"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="MRP"/>
+                        </TableCell>
+                        <TableCell>
+                            <TextField className={classes.eachTextfield}label="Rate"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="Disc"/>
+                        </TableCell>
+                        <TableCell>
+                            <TextField className={classes.eachTextfield}label="Taxable"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="CGST"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="SGST"/>
+                        </TableCell>
+                        <TableCell >
+                            <TextField className={classes.eachTextfield}label="IGST"/>
+                        </TableCell>
+                        <TableCell className={classes.options} >
+                          <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
+                            <AddIcon />
+                          </Fab>
+                          <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
+                            <DeleteIcon />
+                          </Fab>
+                        </TableCell>
+                      </TableRow>
+                    ))}
 
-                        <TableRow>
-                          <TableCell rowSpan={3} />
-                          <TableCell colSpan={2}>Subtotal</TableCell>
-                          <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>Tax</TableCell>
-                          <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
-                          <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell colSpan={2}>Total</TableCell>
-                          <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                    <TableRow>
+                      <TableCell rowSpan={3} />
+                      <TableCell colSpan={2}>Subtotal</TableCell>
+                      <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Tax</TableCell>
+                      <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
+                      <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={2}>Total</TableCell>
+                      <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+          </div>
+        </CardContent>
+      </Card>
+
       </div>
     )
   }
