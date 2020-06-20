@@ -33,8 +33,37 @@ const styles = theme => ({
     display:'flex',
     flexDirection:'column',
     width:'100%',
-    height:'85vh',
-    flexGrow:'1',
+    height:'86vh',
+    backgroundColor:'white',
+    color:'black',
+  },
+  infoSection:{
+    display:'flex',
+    flexDirection:'column',
+    flex:'2',
+    padding:10,
+  },
+  infoHeader:{
+    display:'flex',
+    flex:'1',
+    justifyContent:'center',
+    fontSize:30,
+  },
+  infoBody:{
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    flexWrap:'wrap',
+    padding:5,
+    flex:'3',
+  },
+  infoFooter:{
+    flex:'3',
+  },
+  billingSection:{
+    flex:'8',
+    backgroundColor:'green',
   },
   header: {
     flex:'1',
@@ -186,124 +215,32 @@ class Liststores extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.rootpage}>
-      <Card>
-        <CardContent className={classes.topPurchase}>
-          <div className={classes.purchaseTopDiv}>
-              <Autocomplete
-                id="search-store"
-                disableClearable
-                onChange={(event, newValue) => this.selectedStore(newValue)}
-                options={this.state.allUsers}
-                getOptionLabel={(option) => option.shopName}
-                style={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
-              />
-              <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
-              <div>DL: {this.state.selectedUser.dlNumber}</div>
-          </div>
-          <div className={classes.table}>
-              <TableContainer component={Paper}>
-                <Table aria-label="spanning table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Serial Number</TableCell>
-                      <TableCell align="center">Product Name</TableCell>
-                      <TableCell align="center">Pack</TableCell>
-                      <TableCell align="center">MFG</TableCell>
-                      <TableCell align="center">Batch Number</TableCell>
-                      <TableCell align="center">Expiry</TableCell>
-                      <TableCell align="center">Qty</TableCell>
-                      <TableCell align="center">Free</TableCell>
-                      <TableCell align="center">MRP</TableCell>
-                      <TableCell align="center">Rate</TableCell>
-                      <TableCell align="center">Disc(%)</TableCell>
-                      <TableCell align="center">Taxable</TableCell>
-                      <TableCell align="center">CGST(%)</TableCell>
-                      <TableCell align="center">SGST(%)</TableCell>
-                      <TableCell align="center">IGST(%)</TableCell>
-                      <TableCell align="center">Option</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rows.map((row,index) => (
-                      <TableRow key={row.desc}>
-                        <TableCell>{index+1}</TableCell>
-                        <TableCell>
-                          <div className={classes.AutoComplete}>
-                            <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
-                          </div>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="Pack Size"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="Manufacturer"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="Batch"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="Expiry"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="QTY"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="Free"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="MRP"/>
-                        </TableCell>
-                        <TableCell>
-                            <TextField className={classes.eachTextfield}label="Rate"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="Disc"/>
-                        </TableCell>
-                        <TableCell>
-                            <TextField className={classes.eachTextfield}label="Taxable"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="CGST"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="SGST"/>
-                        </TableCell>
-                        <TableCell >
-                            <TextField className={classes.eachTextfield}label="IGST"/>
-                        </TableCell>
-                        <TableCell className={classes.options} >
-                          <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
-                            <AddIcon />
-                          </Fab>
-                          <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
-                            <DeleteIcon />
-                          </Fab>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-
-                    <TableRow>
-                      <TableCell rowSpan={3} />
-                      <TableCell colSpan={2}>Subtotal</TableCell>
-                      <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Tax</TableCell>
-                      <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
-                      <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell colSpan={2}>Total</TableCell>
-                      <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-          </div>
-        </CardContent>
-      </Card>
-
+        <div className={classes.infoSection}>
+            <div className={classes.infoHeader}>
+                Purchase Section
+            </div>
+            <div className={classes.infoBody}>
+                <Autocomplete
+                  id="search-store"
+                  disableClearable
+                  onChange={(event, newValue) => this.selectedStore(newValue)}
+                  options={this.state.allUsers}
+                  getOptionLabel={(option) => option.shopName}
+                  style={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
+                />
+                <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
+                <div>DL: {this.state.selectedUser.dlNumber}</div>
+            </div>
+            <Divider />
+            <div className={classes.infoFooter}>
+                footer section
+            </div>
+            <Divider />
+        </div>
+        <div className={classes.billingSection}>
+        2
+        </div>
       </div>
     )
   }
