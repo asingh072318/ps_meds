@@ -83,7 +83,7 @@ const styles = theme => ({
   table: {
     maxWidth:'80vw',
     maxHeight:'80vh',
-    overflow:'scroll',
+    overflow:'auto',
   },
   eachTextfield:{
     width:'90px',

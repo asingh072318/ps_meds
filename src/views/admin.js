@@ -31,18 +31,28 @@ const styles = theme => ({
     width:'100%',
     justifyContent:'space-between',
     flexWrap:'wrap',
+    flexGrow:1,
+    height:'80vh',
+  },
+  tableDiv:{
+    display:'flex',
+    flex:1,
+    alignItems:'flex-start',
+    justifyContent:'center',
+    overflow:'auto',
+    padding:10,
+  },
+  cardDiv:{
+    display:'flex',
+    flex:1,
+    alignItems:'flex-start',
+    justifyContent:'center',
   },
   root: {
     maxWidth: 550,
     backgroundColor: '#F6F7F9',
     maxHeight: 650,
-    overflow: 'scroll',
-    padding: 10,
-  },
-  tableDiv: {
-    width: 560,
-    maxHeight: 650,
-    overflow: 'scroll',
+    overflow: 'auto',
     padding: 10,
   },
   media: {
@@ -124,34 +134,34 @@ class Admin extends Component {
     return (
       <div className={classes.rootpage}>
         <div className={classes.tableDiv}>
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Owner Name</TableCell>
-                  <TableCell align="center">Shop Name</TableCell>
-                  <TableCell align="center">GST Number</TableCell>
-                  <TableCell align="center">DL Number</TableCell>
-                  <TableCell align="center">Address</TableCell>
+        <TableContainer component={Paper}>
+          <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Owner Name</TableCell>
+                <TableCell align="center">Shop Name</TableCell>
+                <TableCell align="center">GST Number</TableCell>
+                <TableCell align="center">DL Number</TableCell>
+                <TableCell align="center">Address</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.keys(this.state.allUsers).map((row) => (
+                <TableRow key={this.state.allUsers[row].shopName}>
+                  <TableCell component="th" scope="row">
+                    {this.state.allUsers[row].ownerName}
+                  </TableCell>
+                  <TableCell align="center">{this.state.allUsers[row].shopName}</TableCell>
+                  <TableCell align="center">{this.state.allUsers[row].gstNumber}</TableCell>
+                  <TableCell align="center">{this.state.allUsers[row].dlNumber}</TableCell>
+                  <TableCell align="center">{this.state.allUsers[row].address}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.keys(this.state.allUsers).map((row) => (
-                  <TableRow key={this.state.allUsers[row].shopName}>
-                    <TableCell component="th" scope="row">
-                      {this.state.allUsers[row].ownerName}
-                    </TableCell>
-                    <TableCell align="center">{this.state.allUsers[row].shopName}</TableCell>
-                    <TableCell align="center">{this.state.allUsers[row].gstNumber}</TableCell>
-                    <TableCell align="center">{this.state.allUsers[row].dlNumber}</TableCell>
-                    <TableCell align="center">{this.state.allUsers[row].address}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
         </div>
-        <div>
+        <div className={classes.cardDiv}>
         <Card className={classes.root}>
         <CardHeader
           title="Create New Store"
