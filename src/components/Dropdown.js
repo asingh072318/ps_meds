@@ -45,21 +45,12 @@ class Dropdown extends Component {
     this.state = {
       open:false,
       anchorEl:null,
-      value:"",
+      value:this.props.value,
       cursor:0,
-      set:false,
     };
-    //console.log("constructor called for ",this.props.id,":",this.state);
+    console.log(this.state);
   }
-  componentWillReceiveProps(nextProps){
-    //console.log('receive props called',nextProps.id);
-    //console.log('nextProps.value ', nextProps.value);
-    //console.log('this state value',this.state.value);
-    if(this.state.set===true && nextProps.value !== "" && this.state.value===""){
-      //console.log('recprops setting val to ',nextProps.value,this.state.set);
-      this.setState({value:nextProps.value,set:false});
-    }
-  }
+
   renderSuggestions () {
     const { classes, options, optionsLabel } = this.props;
     const { cursor } = this.state;
@@ -99,26 +90,22 @@ class Dropdown extends Component {
   }
 
   handleChange(e){
-      //console.log('handle change called, setting value to ',e.target.value);
-      this.setState({value:e.target.value,set:false});
-      //console.log(this.state.value);
+      this.setState({value:e.target.value});
       this.props.onChange(e.target.value);
   }
 
   handleClick = (item) => {
     const { optionsLabel } = this.props;
-    //console.log('handleclick called. setting value to ',item[optionsLabel]);
-    this.setState({open:false,set:true,value:item[optionsLabel]});
+    this.setState({open:false,value:item[optionsLabel]});
     this.props.onClick(this.props.id,item);
   }
 
   handleClickAway = () => {
     this.setState({open:false});
   }
-
   render() {
-    const { classes, label, id, value} = this.props;
-    //console.log('should be showing',this.state.value);
+    const { classes, label, id } = this.props;
+    console.log(this.state.value);
     return (
       <ClickAwayListener onClickAway={this.handleClickAway}>
         <div className = {classes.rootpage}>
@@ -136,8 +123,8 @@ class Dropdown extends Component {
             open={this.state.open}
             anchorEl={this.state.anchorEl}
             placement="bottom"
-            children={()=>this.renderSuggestions()}
-          >
+            children={()=>this.renderSuggestions()
+          }>
           </Popper>
         </div>
       </ClickAwayListener>

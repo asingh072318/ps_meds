@@ -109,85 +109,60 @@
 </Card>
 
 
-
-
-
-<table class="table">
-  <thead class="thead-dark">
+<tr>
+  <th scope="row">{index+1}</th>
+  <div className={classes.AutoComplete}>
+    <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
+  </div>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Pack"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Manufacturer"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Batch"/>
+  </td className={classes.tableItem}>
+  <td>
+    <TextField className={classes.eachTextfield} label="Expiry"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="QTY"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Free"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="MRP"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Rate"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Disc"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="Taxable"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="CGST"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="SGST"/>
+  </td>
+  <td className={classes.tableItem}>
+    <TextField className={classes.eachTextfield} label="IGST"/>
+  </td>
+  <td >
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">Product</th>
-      <th scope="col">Pack</th>
-      <th scope="col">MFG</th>
-      <th scope="col">Batch</th>
-      <th scope="col">Expiry</th>
-      <th scope="col">Quantity</th>
-      <th scope="col">Free</th>
-      <th scope="col">MRP</th>
-      <th scope="col">Rate</th>
-      <th scope="col">Disc(%)</th>
-      <th scope="col">Taxable</th>
-      <th scope="col">CGST(%)</th>
-      <th scope="col">SGST(%)</th>
-      <th scope="col">IGST(%)</th>
-      <th scope="col">Option</th>
+      <td>
+      <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
+        <AddIcon />
+      </Fab>
+      <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
+        <DeleteIcon />
+      </Fab>
+      </td>
     </tr>
-  </thead>
-  <tbody >
-    {this.state.billForm.map((row,index)=>(
-      <tr>
-        <th scope="row">{index+1}</th>
-        <div className={classes.AutoComplete}>
-          <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
-        </div>
-        <td>
-          <TextField className={classes.eachTextfield} label="Pack"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Manufacturer"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Batch"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Expiry"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="QTY"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Free"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="MRP"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Rate"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Disc"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="Taxable"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="CGST"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="SGST"/>
-        </td>
-        <td>
-          <TextField className={classes.eachTextfield} label="IGST"/>
-        </td>
-        <td className={classes.options}>
-          <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
-            <AddIcon />
-          </Fab>
-          <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
-            <DeleteIcon />
-          </Fab>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+  </td>
+</tr>

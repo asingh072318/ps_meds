@@ -171,6 +171,7 @@ class Liststores extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      key:0,
       allUsers:[],
       searchData:[],
       selectedUser:{
@@ -180,6 +181,7 @@ class Liststores extends Component {
       },
       billForm:[
         {
+          "id":0,
           "Product":"",
           "Pack":"",
           "MFG":"",
@@ -233,11 +235,12 @@ class Liststores extends Component {
     //console.log(index);
     billForm.splice(index,1);
     this.setState({billForm:billForm});
-    //console.log(billForm);
+    console.log(this.state.billForm);
   }
 
   addRow = () => {
     var payload = {
+      "id":this.state.billForm[this.state.billForm.length - 1]["id"]+1,
       "Product":"",
       "Pack":"",
       "MFG":"",
@@ -255,6 +258,7 @@ class Liststores extends Component {
     };
     var billForm = this.state.billForm;
     billForm.push(payload);
+    console.log('add row',billForm);
     this.setState({billForm:billForm});
   }
   renderOptions = (index) =>{
@@ -275,7 +279,9 @@ class Liststores extends Component {
 
   setValue = (index,payload) => {
     var billForm = this.state.billForm;
+    console.log(payload);
     var newpayload = {
+      "id":this.state.billForm[index]["id"],
       "Product":payload["display_name"],
       "Pack":payload["pack_size"],
       "MFG":payload["manufacturer_name"],
@@ -292,7 +298,7 @@ class Liststores extends Component {
       "IGST(%)":0,
     };
     billForm[index]=newpayload;
-    //console.log(billForm);
+    console.log(newpayload);
     this.setState({billForm:billForm});
   }
 
@@ -309,6 +315,7 @@ class Liststores extends Component {
   }
 
   render() {
+    console.log(this.state.billForm);
     const { classes } = this.props;
     return (
       <div className={classes.rootpage}>
@@ -336,8 +343,8 @@ class Liststores extends Component {
             <Divider />
         </div>
         <div className={classes.billingSection}>
-          <table class="table">
-            <thead class="thead-dark">
+          <table className="table">
+            <thead className="thead-dark">
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Product</th>
@@ -359,15 +366,15 @@ class Liststores extends Component {
             </thead>
             <tbody >
               {this.state.billForm.map((row,index)=>(
-                <tr>
+                <tr key={row["id"]}>
                   <th scope="row" className={classes.tableItem}>{index+1}</th>
                   <td className={classes.tableItem}>
                     <div className={classes.AutoComplete} >
-                      <Dropdown id={index} key={index} onClick={this.setValue} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" value={this.state.billForm[index]['Product']} />
+                      <Dropdown id={index} key={index} onClick={this.setValue} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" value={row['Product']} />
                     </div>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Pack" name="Pack" value={this.state.billForm[index]['Pack']} />
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Pack" name="Pack" value={this.state.billForm[index]['Pack']}/>
                   </td>
                   <td className={classes.tableItem}>
                     <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Manufacturer" name="Manufacturer" value={this.state.billForm[index]['MFG']} />
