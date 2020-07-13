@@ -305,11 +305,11 @@ class Liststores extends Component {
   states = (event,index) => {
     var key = event.target.name;
     var val = event.target.value;
-    //console.log(this.state.billForm);
+    console.log('inside states function',this.state.billForm,key,val);
     this.setState(prevState => {
       var newbillForm = {...prevState.billForm};
       newbillForm[index][key] = val;
-      //console.log(newbillForm);
+      console.log(newbillForm);
       return {newbillForm};
     })
   }
@@ -377,16 +377,16 @@ class Liststores extends Component {
                     <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Pack" name="Pack" value={this.state.billForm[index]['Pack']}/>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Manufacturer" name="Manufacturer" value={this.state.billForm[index]['MFG']} />
+                    <TextField fullWidth className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Manufacturer" name="MFG" value={this.state.billForm[index]['MFG']} />
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} label="Batch" name="Batch" onChange={(event)=>this.states(event,index)} value={this.state.billForm[index]['Batch']} />
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Batch" name="Batch" onChange={(event)=>this.states(event,index)} value={this.state.billForm[index]['Batch']} />
                   </td>
                   <td className={classes.tableItem}>
                     <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Expiry" name="Expiry" value={this.state.billForm[index]['Expiry']}/>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="QTY" name="QTY" value={this.state.billForm[index]['Quantity']}/>
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="QTY" name="Quantity" value={this.state.billForm[index]['Quantity']}/>
                   </td>
                   <td className={classes.tableItem}>
                     <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Free" name="Free" value={this.state.billForm[index]['Free']}/>
@@ -398,19 +398,19 @@ class Liststores extends Component {
                     <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Rate" name="Rate" value={this.state.billForm[index]['Rate']}/>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Disc" name="Disc" value={this.state.billForm[index]['Disc(%)']}/>
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Disc" name="Disc(%)" value={this.state.billForm[index]['Disc(%)']}/>
                   </td>
                   <td className={classes.tableItem}>
                     <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Taxable" name="Taxable" value={this.state.billForm[index]['Taxable']}/>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="CGST" name="CGST" value={this.state.billForm[index]['CGST(%)']}/>
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="CGST" name="CGST(%)" value={this.state.billForm[index]['CGST(%)']}/>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="SGST" name="SGST" value={this.state.billForm[index]['SGST(%)']}/>
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="SGST" name="SGST(%)" value={this.state.billForm[index]['SGST(%)']}/>
                   </td>
                   <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="IGST" name="IGST" value={this.state.billForm[index]['IGST(%)']}/>
+                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="IGST" name="IGST(%)" value={this.state.billForm[index]['IGST(%)']}/>
                   </td>
                   <td className={classes.tableItem}>
                     {this.renderOptions(index)}
