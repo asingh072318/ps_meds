@@ -29,6 +29,9 @@ import Link from '@material-ui/core/Link';
 
 
 const styles = theme => ({
+  button: {
+    margin: theme.spacing(1),
+  },
   rootpage:{
     display:'flex',
     flexDirection:'column',
@@ -66,6 +69,14 @@ const styles = theme => ({
     maxWidth:'80vw',
     maxHeight:'80vh',
     overflow:'auto',
+  },
+  submitSection:{
+    flex:'1',
+    display:'flex',
+    padding:5,
+    margin:5,
+    alignItems:'center',
+    justifyContent:'flex-end',
   },
   header: {
     flex:'1',
@@ -196,7 +207,9 @@ class Liststores extends Component {
           "CGST(%)":0,
           "SGST(%)":0,
           "IGST(%)":0,
-          "Option":0,
+          "CGSTVAL":0,
+          "SGSTVAL":0,
+          "IGSTVAL":0,
         }
       ],
     };
@@ -238,6 +251,30 @@ class Liststores extends Component {
     console.log(this.state.billForm);
   }
 
+  createBill = () => {
+    var billForm = this.state.billForm;
+    var total=0,tax=0;
+    var tax_slab={
+      "CGST":{},
+      "SGST":{},
+      "IGST":{},
+    };
+    for (var i = 0; i < billForm.length; i++) {
+      tax_slab["CGST"][billForm[i]["CGST(%)"]]=tax_slab["CGST"][billForm[i]["CGST(%)"]] || {};
+      tax_slab["SGST"][billForm[i]["SGST(%)"]]=tax_slab["SGST"][billForm[i]["SGST(%)"]] || {};
+      tax_slab["IGST"][billForm[i]["IGST(%)"]]=tax_slab["IGST"][billForm[i]["IGST(%)"]] || {};
+      tax_slab["CGST"][billForm[i]["CGST(%)"]]['Taxable'] = tax_slab["CGST"][billForm[i]["CGST(%)"]]['Taxable']+billForm[i]['Taxable'] || billForm[i]['Taxable'];
+      tax_slab["SGST"][billForm[i]["SGST(%)"]]['Taxable'] = tax_slab["SGST"][billForm[i]["SGST(%)"]]['Taxable']+billForm[i]['Taxable'] || billForm[i]['Taxable'];
+      tax_slab["IGST"][billForm[i]["IGST(%)"]]['Taxable'] = tax_slab["IGST"][billForm[i]["IGST(%)"]]['Taxable']+billForm[i]['Taxable'] || billForm[i]['Taxable'];
+      tax_slab["CGST"][billForm[i]["CGST(%)"]]['Tax'] = tax_slab["CGST"][billForm[i]["CGST(%)"]]['Tax']+billForm[i]['CGSTVAL'] || billForm[i]['CGSTVAL'];
+      tax_slab["SGST"][billForm[i]["SGST(%)"]]['Tax'] = tax_slab["SGST"][billForm[i]["SGST(%)"]]['Tax']+billForm[i]['SGSTVAL'] || billForm[i]['SGSTVAL'];
+      tax_slab["IGST"][billForm[i]["IGST(%)"]]['Tax'] = tax_slab["IGST"][billForm[i]["IGST(%)"]]['Tax']+billForm[i]['IGSTVAL'] || billForm[i]['IGSTVAL'];
+      total+=billForm[i]['Taxable'];
+      tax+=billForm[i]['CGSTVAL']+billForm[i]['SGSTVAL']+billForm[i]['IGSTVAL'];
+    }
+    console.log(total,tax,tax_slab);
+  }
+
   addRow = () => {
     var payload = {
       "id":this.state.billForm[this.state.billForm.length - 1]["id"]+1,
@@ -255,6 +292,9 @@ class Liststores extends Component {
       "CGST(%)":0,
       "SGST(%)":0,
       "IGST(%)":0,
+      "CGSTVAL":0,
+      "SGSTVAL":0,
+      "IGSTVAL":0,
     };
     var billForm = this.state.billForm;
     billForm.push(payload);
@@ -296,6 +336,9 @@ class Liststores extends Component {
       "CGST(%)":0,
       "SGST(%)":0,
       "IGST(%)":0,
+      "CGSTVAL":0,
+      "SGSTVAL":0,
+      "IGSTVAL":0,
     };
     billForm[index]=newpayload;
     console.log(newpayload);
@@ -309,6 +352,18 @@ class Liststores extends Component {
     this.setState(prevState => {
       var newbillForm = {...prevState.billForm};
       newbillForm[index][key] = val;
+      if(key === 'Disc(%)'){
+        newbillForm[index]['Taxable'] = newbillForm[index]['Rate'] *  newbillForm[index]['Quantity'] * (100-val)/100;
+      }
+      if(key === 'CGST(%)'){
+        newbillForm[index]['CGSTVAL'] = newbillForm[index]['Taxable'] * (val)/100;
+      }
+      if(key === 'SGST(%)'){
+        newbillForm[index]['SGSTVAL'] = newbillForm[index]['Taxable'] * (val)/100;
+      }
+      if(key === 'IGST(%)'){
+        newbillForm[index]['IGSTVAL'] = newbillForm[index]['Taxable'] * (val)/100;
+      }
       console.log(newbillForm);
       return {newbillForm};
     })
@@ -419,6 +474,11 @@ class Liststores extends Component {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className={classes.submitSection}>
+          <Button onClick={this.createBill} variant="contained" color="primary" className={classes.button}>
+            Submit
+          </Button>
         </div>
       </div>
     )
