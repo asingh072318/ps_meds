@@ -17,6 +17,7 @@ export default State(currentState, {
         isAdmin:false,
         ownerName:"",
         shopName:"",
+        contactNumber:"",
       },
       allUsers:{},
       searchData:[],
@@ -46,6 +47,7 @@ export default State(currentState, {
     state.currentStoreDetails.shopName=payload.shopName.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
     state.currentStoreDetails.dlNumber=payload.dlNumber;
     state.currentStoreDetails.gstNumber=payload.gstNumber;
+    state.currentStoreDetails.contactNumber=payload.contactNumber;
     return _.cloneDeep(state);
   },
   setAllUsers(state,payload){

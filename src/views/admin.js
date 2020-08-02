@@ -68,7 +68,7 @@ const styles = theme => ({
     flexDirection:'column',
     alignItems:'center',
     justifyContent:'center',
-    maxHeight: '500px',
+    maxHeight: '600px',
   },
   table: {
     maxHeight: 650,
@@ -88,6 +88,7 @@ class Admin extends Component {
         isAdmin:false,
         ownerName:"",
         shopName:"",
+        contactNumber:"",
       },
       allUsers:{},
     };
@@ -102,6 +103,7 @@ class Admin extends Component {
         isAdmin:false,
         ownerName:"",
         shopName:"",
+        contactNumber:"",
       }
       this.setState({
         allUsers:nextProps.coach.allUsers,
@@ -228,6 +230,18 @@ class Admin extends Component {
               name="ownerName"
               autoComplete="Owner Name"
               value={this.state.newStoreDetails.ownerName}
+              onChange={event => this.states(event)}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="contactNumber"
+              label="Contact Number"
+              name="contactNumber"
+              autoComplete="Contact Number"
+              value={this.state.newStoreDetails.contactNumber}
               onChange={event => this.states(event)}
             />
             <TextField

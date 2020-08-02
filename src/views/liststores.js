@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
+import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -25,8 +26,13 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import Slide from '@material-ui/core/Slide';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Bill from '../components/Bill';
 // Binding the state and actions. These will be available as props to component
-
 
 const styles = theme => ({
   button: {
@@ -62,11 +68,15 @@ const styles = theme => ({
     flex:'3',
   },
   infoFooter:{
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    flexWrap:'wrap',
     flex:'3',
   },
   billingSection:{
     flex:'8',
-    maxWidth:'80vw',
+    maxWidth:'96vw',
     maxHeight:'80vh',
     overflow:'auto',
   },
@@ -134,26 +144,27 @@ const styles = theme => ({
   footer:{
     width:'100%',
     height:'50px',
-    backgroundColor:'red',
     textAlign:'center',
   },
+  seller:{
+    width:'300px',
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    textAlign:'center',
+    flex: 1,
+  },
+  pdfViewer:{
+    display:'flex',
+    width:'100%',
+    height:'90vh',
+  }
 });
-function ccyFormat(num) {
-  return `${num.toFixed(2)}`;
-}
-
-function priceRow(qty, unit) {
-  return qty * unit;
-}
-
-function createRow(desc, qty, unit) {
-  const price = priceRow(qty, unit);
-  return { desc, qty, unit, price };
-}
-
-function subtotal(items) {
-  return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
-}
 
 function Copyright() {
   return (
@@ -168,16 +179,6 @@ function Copyright() {
   );
 }
 
-const rows = [
-  createRow('Paperclips (Box)', 100, 1.15),
-  createRow('Paper (Case)', 10, 45.99),
-];
-
-const invoiceSubtotal = subtotal(rows);
-const invoiceTaxes = TAX_RATE * invoiceSubtotal;
-const invoiceTotal = invoiceTaxes + invoiceSubtotal;
-const TAX_RATE = 0.07;
-
 class Liststores extends Component {
   constructor(props) {
     super(props);
@@ -185,11 +186,13 @@ class Liststores extends Component {
       key:0,
       allUsers:[],
       searchData:[],
-      selectedUser:{
-        uuid:"",
-        gstNumber:"",
-        dlNumber:"",
-      },
+      finalBill:{},
+      billModal:false,
+      selectedUser:{},
+      seller:"",
+      seller_gstin:"",
+      seller_dlnumber:"",
+      seller_contact:"",
       billForm:[
         {
           "id":0,
@@ -232,14 +235,8 @@ class Liststores extends Component {
   }
 
   selectedStore = (newValue) => {
-    var selectedUser = {
-      uuid:newValue.uuid,
-      gstNumber:newValue.gstNumber,
-      dlNumber:newValue.dlNumber,
-    }
-    //console.log(selectedUser);
     this.setState({
-      selectedUser:selectedUser
+      selectedUser:newValue
     })
   }
 
@@ -253,7 +250,7 @@ class Liststores extends Component {
 
   createBill = () => {
     var billForm = this.state.billForm;
-    var total=0,tax=0;
+    var total_taxable=0,tax=0;
     var tax_slab={
       "CGST":{},
       "SGST":{},
@@ -269,10 +266,39 @@ class Liststores extends Component {
       tax_slab["CGST"][billForm[i]["CGST(%)"]]['Tax'] = tax_slab["CGST"][billForm[i]["CGST(%)"]]['Tax']+billForm[i]['CGSTVAL'] || billForm[i]['CGSTVAL'];
       tax_slab["SGST"][billForm[i]["SGST(%)"]]['Tax'] = tax_slab["SGST"][billForm[i]["SGST(%)"]]['Tax']+billForm[i]['SGSTVAL'] || billForm[i]['SGSTVAL'];
       tax_slab["IGST"][billForm[i]["IGST(%)"]]['Tax'] = tax_slab["IGST"][billForm[i]["IGST(%)"]]['Tax']+billForm[i]['IGSTVAL'] || billForm[i]['IGSTVAL'];
-      total+=billForm[i]['Taxable'];
+      total_taxable+=billForm[i]['Taxable'];
       tax+=billForm[i]['CGSTVAL']+billForm[i]['SGSTVAL']+billForm[i]['IGSTVAL'];
     }
-    console.log(total,tax,tax_slab);
+    var total = total_taxable+tax;
+    var date = new Date();
+    var invoice_number = date.getFullYear()+Math.floor(Math.random() * (99999999999 -  10000000000)) + 10000000000;
+    var invoice_date = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+    var customer = this.state.selectedUser;
+    var bill = {
+      invoice_number:invoice_number,
+      invoice_date:invoice_date,
+      seller_store:{
+        store_name:this.state.seller,
+        store_address:"N/A",
+        store_gstin:this.state.seller_gstin,
+        store_contact:this.state.seller_contact,
+        store_dlnumber:this.state.seller_dlnumber,
+      },
+      customer_store:{
+        store_name:customer.shopName,
+        store_address:customer.address,
+        store_gstin:customer.gstNumber,
+        store_contact:customer.contactNumber,
+        store_dlnumber:customer.dlNumber,
+      },
+      items:billForm,
+      total_taxable:total_taxable,
+      tax:tax,
+      tax_slab:tax_slab,
+      total:total,
+    };
+    console.log(bill);
+    this.setState({finalBill:bill,billModal:true});
   }
 
   addRow = () => {
@@ -301,6 +327,7 @@ class Liststores extends Component {
     console.log('add row',billForm);
     this.setState({billForm:billForm});
   }
+
   renderOptions = (index) =>{
     const { classes } = this.props;
     if(index===this.state.billForm.length-1){
@@ -369,15 +396,77 @@ class Liststores extends Component {
     })
   }
 
+  setModalClose = () => {
+    this.setState({billModal:false});
+  }
+
   render() {
-    console.log(this.state.billForm);
+    console.log(this.state.selectedUser);
     const { classes } = this.props;
     return (
       <div className={classes.rootpage}>
+      <Dialog fullScreen open={this.state.billModal} onClose={this.setModalClose}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={this.setModalClose} aria-label="Close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              INVOICE
+            </Typography>
+            <Button color="inherit" onClick={this.setModalClose}>
+              Save Bill
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <div className={classes.pdfViewer}>
+          <Bill data={this.state.finalBill}/>
+        </div>
+      </Dialog>
         <div className={classes.infoSection}>
             <div className={classes.infoHeader}>
                 Purchase Section
             </div>
+            <Divider />
+            <div className={classes.infoFooter}>
+                <TextField
+                  id="seller"
+                  label="Seller"
+                  className={classes.seller}
+                  value={this.state.seller}
+                  onChange={(event)=>this.setState({seller:event.target.value})}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <TextField
+                  id="seller_gstin"
+                  label="GSTIN"
+                  className={classes.seller}
+                  value={this.state.seller_gstin}
+                  onChange={(event)=>this.setState({seller_gstin:event.target.value})}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <TextField
+                  id="seller_dlnumber"
+                  label="DL"
+                  className={classes.seller}
+                  value={this.state.seller_dlnumber}
+                  onChange={(event)=>this.setState({seller_dlnumber:event.target.value})}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <TextField
+                  id="seller_contact"
+                  label="Contact"
+                  className={classes.seller}
+                  value={this.state.seller_contact}
+                  onChange={(event)=>this.setState({seller_contact:event.target.value})}
+                  margin="normal"
+                  variant="outlined"
+                />
+            </div>
+            <Divider />
             <div className={classes.infoBody}>
                 <Autocomplete
                   id="search-store"
@@ -385,95 +474,140 @@ class Liststores extends Component {
                   onChange={(event, newValue) => this.selectedStore(newValue)}
                   options={this.state.allUsers}
                   getOptionLabel={(option) => option.shopName}
-                  style={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Select Store" variant="outlined" />}
+                  className={classes.seller}
+                  renderInput={(params) => <TextField {...params} label="Customer" variant="outlined" />}
                 />
-                <div>GSTIN: {this.state.selectedUser.gstNumber}</div>
-                <div>DL: {this.state.selectedUser.dlNumber}</div>
-            </div>
-            <Divider />
-            <div className={classes.infoFooter}>
-                footer section
+                <TextField
+                  id="buyer_gstNumber"
+                  label="GSTIN"
+                  className={classes.seller}
+                  value={this.state.selectedUser.gstNumber}
+                  defaultValue="N/A"
+                  onChange={(event)=>{
+                    const { value } = event.target;
+                    this.setState(prevState =>{
+                      var selectedUser = {...prevState.selectedUser};
+                      selectedUser['gstNumber'] = value;
+                      return {selectedUser};
+                    })
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <TextField
+                  id="buyer_dlNumber"
+                  label="DL Number"
+                  className={classes.seller}
+                  value={this.state.selectedUser.dlNumber}
+                  defaultValue="N/A"
+                  onChange={(event)=>{
+                    const { value } = event.target;
+                    this.setState(prevState =>{
+                      var selectedUser = {...prevState.selectedUser};
+                      selectedUser['dlNumber'] = value;
+                      return {selectedUser};
+                    })
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                />
+                <TextField
+                  id="buyer_contact"
+                  label="Contact"
+                  className={classes.seller}
+                  value={this.state.selectedUser.contactNumber}
+                  defaultValue="N/A"
+                  onChange={(event)=>{
+                    const { value } = event.target;
+                    this.setState(prevState =>{
+                      var selectedUser = {...prevState.selectedUser};
+                      selectedUser['contactNumber'] = value;
+                      return {selectedUser};
+                    })
+                  }}
+                  margin="normal"
+                  variant="outlined"
+                />
             </div>
             <Divider />
         </div>
         <div className={classes.billingSection}>
-          <table className="table">
-            <thead className="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Product</th>
-                <th scope="col">Pack</th>
-                <th scope="col">MFG</th>
-                <th scope="col">Batch</th>
-                <th scope="col">Expiry</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Free</th>
-                <th scope="col">MRP</th>
-                <th scope="col">Rate</th>
-                <th scope="col">Disc(%)</th>
-                <th scope="col">Taxable</th>
-                <th scope="col">CGST(%)</th>
-                <th scope="col">SGST(%)</th>
-                <th scope="col">IGST(%)</th>
-                <th scope="col">Option</th>
+        <table className="table">
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Product</th>
+              <th scope="col">Pack</th>
+              <th scope="col">MFG</th>
+              <th scope="col">Batch</th>
+              <th scope="col">Expiry</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Free</th>
+              <th scope="col">MRP</th>
+              <th scope="col">Rate</th>
+              <th scope="col">Disc(%)</th>
+              <th scope="col">Taxable</th>
+              <th scope="col">CGST(%)</th>
+              <th scope="col">SGST(%)</th>
+              <th scope="col">IGST(%)</th>
+              <th scope="col">Option</th>
+            </tr>
+          </thead>
+          <tbody >
+            {this.state.billForm.map((row,index)=>(
+              <tr key={row["id"]}>
+                <th scope="row" className={classes.tableItem}>{index+1}</th>
+                <td className={classes.tableItem}>
+                  <div className={classes.AutoComplete} >
+                    <Dropdown id={index} key={index} onClick={this.setValue} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" value={row['Product']} />
+                  </div>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Pack" name="Pack" value={this.state.billForm[index]['Pack']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField fullWidth className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Manufacturer" name="MFG" value={this.state.billForm[index]['MFG']} />
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Batch" name="Batch" onChange={(event)=>this.states(event,index)} value={this.state.billForm[index]['Batch']} />
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Expiry" name="Expiry" value={this.state.billForm[index]['Expiry']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="QTY" name="Quantity" value={this.state.billForm[index]['Quantity']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Free" name="Free" value={this.state.billForm[index]['Free']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="MRP" name="MRP" value={this.state.billForm[index]['MRP']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Rate" name="Rate" value={this.state.billForm[index]['Rate']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Disc" name="Disc(%)" value={this.state.billForm[index]['Disc(%)']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Taxable" name="Taxable" value={this.state.billForm[index]['Taxable']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="CGST" name="CGST(%)" value={this.state.billForm[index]['CGST(%)']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="SGST" name="SGST(%)" value={this.state.billForm[index]['SGST(%)']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="IGST" name="IGST(%)" value={this.state.billForm[index]['IGST(%)']}/>
+                </td>
+                <td className={classes.tableItem}>
+                  {this.renderOptions(index)}
+                </td>
               </tr>
-            </thead>
-            <tbody >
-              {this.state.billForm.map((row,index)=>(
-                <tr key={row["id"]}>
-                  <th scope="row" className={classes.tableItem}>{index+1}</th>
-                  <td className={classes.tableItem}>
-                    <div className={classes.AutoComplete} >
-                      <Dropdown id={index} key={index} onClick={this.setValue} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" value={row['Product']} />
-                    </div>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Pack" name="Pack" value={this.state.billForm[index]['Pack']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField fullWidth className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Manufacturer" name="MFG" value={this.state.billForm[index]['MFG']} />
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Batch" name="Batch" onChange={(event)=>this.states(event,index)} value={this.state.billForm[index]['Batch']} />
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Expiry" name="Expiry" value={this.state.billForm[index]['Expiry']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="QTY" name="Quantity" value={this.state.billForm[index]['Quantity']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Free" name="Free" value={this.state.billForm[index]['Free']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="MRP" name="MRP" value={this.state.billForm[index]['MRP']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Rate" name="Rate" value={this.state.billForm[index]['Rate']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Disc" name="Disc(%)" value={this.state.billForm[index]['Disc(%)']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="Taxable" name="Taxable" value={this.state.billForm[index]['Taxable']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="CGST" name="CGST(%)" value={this.state.billForm[index]['CGST(%)']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="SGST" name="SGST(%)" value={this.state.billForm[index]['SGST(%)']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    <TextField className={classes.eachTextfield} onChange={(event)=>this.states(event,index)} label="IGST" name="IGST(%)" value={this.state.billForm[index]['IGST(%)']}/>
-                  </td>
-                  <td className={classes.tableItem}>
-                    {this.renderOptions(index)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
         </div>
         <div className={classes.submitSection}>
           <Button onClick={this.createBill} variant="contained" color="primary" className={classes.button}>

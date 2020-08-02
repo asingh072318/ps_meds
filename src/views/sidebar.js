@@ -39,10 +39,6 @@ const styles = theme => ({
     },
   },
   appBar: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
     backgroundColor:'#282C34',
   },
   title: {
@@ -50,9 +46,6 @@ const styles = theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
-    },
   },
   logoutButton:{
     color:'#ADB0BB',
@@ -177,34 +170,21 @@ class Sidebar extends Component {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
+      <nav aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
-          <Drawer
-            variant="temporary"
-            open={this.state.mobileOpen}
-            onClose={() => this.handleDrawerToggle()}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
+        <Drawer
+          variant="temporary"
+          open={this.state.mobileOpen}
+          onClose={() => this.handleDrawerToggle()}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
+          {drawer}
+        </Drawer>
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />

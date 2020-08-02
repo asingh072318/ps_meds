@@ -1,168 +1,227 @@
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Actions } from "jumpstate";
+import { browserHistory } from "react-router";
+import * as firebaseutils from "../utils/firebaseutils";
+import firebase from "firebase";
+import { withStyles } from '@material-ui/core/styles';
 
-<div className={classes.table}>
-    <TableContainer component={Paper}>
-      <Table aria-label="spanning table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Serial Number</TableCell>
-            <TableCell align="center">Product Name</TableCell>
-            <TableCell align="center">Pack</TableCell>
-            <TableCell align="center">MFG</TableCell>
-            <TableCell align="center">Batch Number</TableCell>
-            <TableCell align="center">Expiry</TableCell>
-            <TableCell align="center">Qty</TableCell>
-            <TableCell align="center">Free</TableCell>
-            <TableCell align="center">MRP</TableCell>
-            <TableCell align="center">Rate</TableCell>
-            <TableCell align="center">Disc(%)</TableCell>
-            <TableCell align="center">Taxable</TableCell>
-            <TableCell align="center">CGST(%)</TableCell>
-            <TableCell align="center">SGST(%)</TableCell>
-            <TableCell align="center">IGST(%)</TableCell>
-            <TableCell align="center">Option</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row,index) => (
-            <TableRow key={row.desc}>
-              <TableCell>{index+1}</TableCell>
-              <TableCell>
-                <div className={classes.AutoComplete}>
-                  <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
-                </div>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="Pack Size"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="Manufacturer"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="Batch"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="Expiry"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="QTY"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="Free"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="MRP"/>
-              </TableCell>
-              <TableCell>
-                  <TextField className={classes.eachTextfield}label="Rate"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="Disc"/>
-              </TableCell>
-              <TableCell>
-                  <TextField className={classes.eachTextfield}label="Taxable"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="CGST"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="SGST"/>
-              </TableCell>
-              <TableCell >
-                  <TextField className={classes.eachTextfield}label="IGST"/>
-              </TableCell>
-              <TableCell className={classes.options} >
-                <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
-                  <AddIcon />
-                </Fab>
-                <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
-                  <DeleteIcon />
-                </Fab>
-              </TableCell>
-            </TableRow>
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Clock from 'react-live-clock';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import MailIcon from '@material-ui/icons/Mail';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+
+// Binding the state and actions. These will be available as props to component
+const styles = theme => ({
+  root: {
+    display: 'flex',
+  },
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
+  },
+  appBar: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+    backgroundColor:'#282C34',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  logoutButton:{
+    color:'#ADB0BB',
+    '&:hover': {
+       background: "#373B42",
+    },
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  drawerTop:{
+    height:'200px',
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'center',
+  },
+  drawerTopText:{
+    marginTop:theme.spacing(3),
+    color:'white',
+    fontSize:'16px',
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    backgroundColor:'#282C34',
+    color:'#ADB0BB',
+  },
+  listItem:{
+    '&:hover': {
+       background: "#373B42",
+    },
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    color:'black',
+  },
+});
+
+const drawerWidth = 240;
+class Sidebar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mobileOpen:false,
+      ownerName:"",
+    };
+  }
+
+  logout = () => {
+    firebaseutils.signOut();
+    browserHistory.push("/");
+  }
+  gotoPage = (page) => {
+    browserHistory.push(page);
+  }
+  handleDrawerToggle = () => {
+    this.setState({mobileOpen:!this.state.mobileOpen});
+  }
+
+  render() {
+    const { classes, children } = this.props;
+    const currentStoreDetails = {...this.props.coach.currentStoreDetails};
+    //console.log(currentStoreDetails);
+    var goto = currentStoreDetails.isAdmin ? "/admin" : "/home";
+    const drawer = (
+      <div className={classes.drawer}>
+        <div className={classes.drawerTop}>
+          <Avatar className={classes.large}>{currentStoreDetails.ownerName[0]}</Avatar>
+          <div className={classes.drawerTopText}>{currentStoreDetails.ownerName}</div>
+          <div >{currentStoreDetails.shopName}</div>
+          <div >DLNumber: {currentStoreDetails.dlNumber}</div>
+          <div >GSTIN: {currentStoreDetails.gstNumber}</div>
+        </div>
+        <Divider />
+        <List>
+            <ListItem className={classes.listItem} button key="Dashboard" onClick={() => this.gotoPage(goto)}>
+              <ListItemText primary="Dashboard" />
+            </ListItem>
+            <ListItem className={classes.listItem} button key="Create Store">
+              <ListItemText primary="Create Store" />
+            </ListItem>
+            <ListItem className={classes.listItem} button key="Update Inventory">
+              <ListItemText primary="Update Inventory" />
+            </ListItem>
+            <ListItem className={classes.listItem} button key="List Stores" onClick={() => this.gotoPage("/liststores")}>
+              <ListItemText primary="List Stores" />
+            </ListItem>
+        </List>
+        <Divider />
+        <List>
+          {['All mail', 'Trash', 'Spam'].map((text) => (
+            <ListItem button key={text}>
+              <ListItemText primary={text} />
+            </ListItem>
           ))}
+        </List>
+      </div>
+    );
 
-          <TableRow>
-            <TableCell rowSpan={3} />
-            <TableCell colSpan={2}>Subtotal</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Tax</TableCell>
-            <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>Total</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
-</div>
+    return (
+      <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={() => this.handleDrawerToggle()}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title} />
+          <Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Kolkata'} />
+          <IconButton className={classes.logoutButton} onClick={() => this.logout()}>
+            <PowerSettingsNewIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <nav className={classes.drawer} aria-label="mailbox folders">
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Hidden smUp implementation="css">
+          <Drawer
+            variant="temporary"
+            open={this.state.mobileOpen}
+            onClose={() => this.handleDrawerToggle()}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {children}
+      </main>
+    </div>
+    )
+  }
+}
+const mapStateToProps = (state) => {
+  return {
+    coach: state.coach
+  }
+}
 
+const mapDispatchToProps = (dispatch) => {
+  return {}
+}
 
-
-<Card>
-  <CardContent className={classes.topPurchase}>
-
-  </CardContent>
-</Card>
-
-
-<tr>
-  <th scope="row">{index+1}</th>
-  <div className={classes.AutoComplete}>
-    <Dropdown key={index} onChange={firebaseutils.search_meds} options={this.props.coach.searchData} optionsLabel="display_name" label="Search Medicine" />
-  </div>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Pack"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Manufacturer"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Batch"/>
-  </td className={classes.tableItem}>
-  <td>
-    <TextField className={classes.eachTextfield} label="Expiry"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="QTY"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Free"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="MRP"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Rate"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Disc"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="Taxable"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="CGST"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="SGST"/>
-  </td>
-  <td className={classes.tableItem}>
-    <TextField className={classes.eachTextfield} label="IGST"/>
-  </td>
-  <td >
-    <tr>
-      <td>
-      <Fab size="small" color="primary" aria-label="Add" className={classes.fab}>
-        <AddIcon />
-      </Fab>
-      <Fab size="small" color="secondary" aria-label="Add" className={classes.fab}>
-        <DeleteIcon />
-      </Fab>
-      </td>
-    </tr>
-  </td>
-</tr>
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Sidebar));

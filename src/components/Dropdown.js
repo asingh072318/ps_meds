@@ -7,8 +7,6 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 const styles = theme => ({
   rootpage:{
     width:'100%',
-    margin:'5px',
-    padding:theme.spacing(1),
   },
   parentList:{
     maxWidth:'100%',
