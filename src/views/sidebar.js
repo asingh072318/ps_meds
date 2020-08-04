@@ -163,7 +163,8 @@ class Sidebar extends Component {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title} />
+          <Typography variant="h6" className={classes.title}>{this.props.coach.currentStoreDetails.shopName.toUpperCase()}</Typography>
+          <Typography variant="h6" className={classes.title}>Welcome, {this.props.coach.currentStoreDetails.ownerName.toUpperCase()}</Typography>
           <Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Kolkata'} />
           <IconButton className={classes.logoutButton} onClick={() => this.logout()}>
             <PowerSettingsNewIcon />

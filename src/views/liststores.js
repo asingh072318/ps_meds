@@ -42,7 +42,7 @@ const styles = theme => ({
     display:'flex',
     flexDirection:'column',
     width:'100%',
-    height:'86vh',
+    height:'84vh',
     backgroundColor:'white',
     color:'black',
   },
@@ -50,13 +50,15 @@ const styles = theme => ({
     display:'flex',
     flexDirection:'column',
     flex:'2',
-    padding:10,
   },
   infoHeader:{
     display:'flex',
     flex:'1',
     justifyContent:'center',
     fontSize:30,
+    backgroundColor:'#343a40',
+    color:'white',
+    padding:10,
   },
   infoBody:{
     display:'flex',
@@ -83,10 +85,10 @@ const styles = theme => ({
   submitSection:{
     flex:'1',
     display:'flex',
-    padding:5,
-    margin:5,
+    backgroundColor:'#343a40',
     alignItems:'center',
     justifyContent:'flex-end',
+
   },
   header: {
     flex:'1',
@@ -611,7 +613,7 @@ class Liststores extends Component {
         </div>
         <div className={classes.submitSection}>
           <Button onClick={this.createBill} variant="contained" color="primary" className={classes.button}>
-            Submit
+            Create Bill
           </Button>
         </div>
       </div>
