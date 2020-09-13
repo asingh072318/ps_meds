@@ -32,11 +32,16 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Bill from '../components/Bill';
+import QRCode from "qrcode.react";
+import { v4 as uuidv4 } from 'uuid';
 // Binding the state and actions. These will be available as props to component
 
 const styles = theme => ({
   button: {
     margin: theme.spacing(1),
+  },
+  hidden: {
+    display: 'none'
   },
   rootpage:{
     display:'flex',
@@ -186,15 +191,18 @@ class Liststores extends Component {
     super(props);
     this.state = {
       key:0,
+      invoice_number:0,
       allUsers:[],
       searchData:[],
       finalBill:{},
+      compressedString:"",
       billModal:false,
+      img_src:"",
       selectedUser:{},
-      seller:"",
-      seller_gstin:"",
-      seller_dlnumber:"",
-      seller_contact:"",
+      seller:"Default Seller",
+      seller_gstin:"123213123131",
+      seller_dlnumber:"3/3A",
+      seller_contact:"9835010393",
       billForm:[
         {
           "id":0,
@@ -229,7 +237,9 @@ class Liststores extends Component {
     });
     //console.log('allUsersarray',allUsersarray);
     //console.log('searchresultarray',nextProps.coach.searchData);
-    this.setState({allUsers:allUsersarray});
+    var date = new Date();
+    var invoice_number = uuidv4();
+    this.setState({allUsers:allUsersarray,invoice_number:invoice_number});
   }
   componentWillMount(){
     firebaseutils.read_allusers();
@@ -250,8 +260,23 @@ class Liststores extends Component {
     console.log(this.state.billForm);
   }
 
-  createBill = () => {
+  states = (event,index) => {
+    var key = event.target.name;
+    var val = event.target.value;
     var billForm = this.state.billForm;
+    billForm[index][key] = val;
+    if(key === 'Disc(%)'){
+      billForm[index]['Taxable'] = billForm[index]['Rate'] *  billForm[index]['Quantity'] * (100-val)/100;
+    }
+    if(key === 'CGST(%)'){
+      billForm[index]['CGSTVAL'] = billForm[index]['Taxable'] * (val)/100;
+    }
+    if(key === 'SGST(%)'){
+      billForm[index]['SGSTVAL'] = billForm[index]['Taxable'] * (val)/100;
+    }
+    if(key === 'IGST(%)'){
+      billForm[index]['IGSTVAL'] = billForm[index]['Taxable'] * (val)/100;
+    }
     var total_taxable=0,tax=0;
     var tax_slab={
       "CGST":{},
@@ -273,11 +298,10 @@ class Liststores extends Component {
     }
     var total = total_taxable+tax;
     var date = new Date();
-    var invoice_number = date.getFullYear()+Math.floor(Math.random() * (99999999999 -  10000000000)) + 10000000000;
     var invoice_date = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
     var customer = this.state.selectedUser;
     var bill = {
-      invoice_number:invoice_number,
+      invoice_number:this.state.invoice_number,
       invoice_date:invoice_date,
       seller_store:{
         store_name:this.state.seller,
@@ -299,8 +323,19 @@ class Liststores extends Component {
       tax_slab:tax_slab,
       total:total,
     };
-    console.log(bill);
-    this.setState({finalBill:bill,billModal:true});
+    console.log(billForm,bill);
+    var jsscompress = require("js-string-compression");
+    var hm = new jsscompress.Hauffman();
+    var compressed = hm.compress(JSON.stringify(bill));
+    console.log("before length: " + JSON.stringify(bill).length);
+    console.log("length: " + compressed.length);
+    this.setState({billForm:billForm,finalBill:bill,compressedString:compressed});
+  }
+
+  createBill = () => {
+    const canvas = document.getElementById('qr');
+    var pngUrl = canvas.toDataURL("image/png");
+    this.setState({billModal:true,img_src:pngUrl});
   }
 
   addRow = () => {
@@ -374,39 +409,23 @@ class Liststores extends Component {
     this.setState({billForm:billForm});
   }
 
-  states = (event,index) => {
-    var key = event.target.name;
-    var val = event.target.value;
-    console.log('inside states function',this.state.billForm,key,val);
-    this.setState(prevState => {
-      var newbillForm = {...prevState.billForm};
-      newbillForm[index][key] = val;
-      if(key === 'Disc(%)'){
-        newbillForm[index]['Taxable'] = newbillForm[index]['Rate'] *  newbillForm[index]['Quantity'] * (100-val)/100;
-      }
-      if(key === 'CGST(%)'){
-        newbillForm[index]['CGSTVAL'] = newbillForm[index]['Taxable'] * (val)/100;
-      }
-      if(key === 'SGST(%)'){
-        newbillForm[index]['SGSTVAL'] = newbillForm[index]['Taxable'] * (val)/100;
-      }
-      if(key === 'IGST(%)'){
-        newbillForm[index]['IGSTVAL'] = newbillForm[index]['Taxable'] * (val)/100;
-      }
-      console.log(newbillForm);
-      return {newbillForm};
-    })
-  }
-
   setModalClose = () => {
     this.setState({billModal:false});
   }
 
   render() {
-    console.log(this.state.selectedUser);
+    console.log(JSON.stringify(this.state.finalBill));
     const { classes } = this.props;
     return (
       <div className={classes.rootpage}>
+      <div className={classes.hidden}>
+        <QRCode
+          id="qr"
+          value={JSON.stringify(this.state.finalBill)}
+          level={"L"}
+          size={500}
+        />
+      </div>
       <Dialog fullScreen open={this.state.billModal} onClose={this.setModalClose}>
         <AppBar className={classes.appBar}>
           <Toolbar>
@@ -422,7 +441,7 @@ class Liststores extends Component {
           </Toolbar>
         </AppBar>
         <div className={classes.pdfViewer}>
-          <Bill data={this.state.finalBill}/>
+          <Bill data={this.state.finalBill} qr={this.state.img_src} />
         </div>
       </Dialog>
         <div className={classes.infoSection}>

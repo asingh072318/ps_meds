@@ -1,41 +1,43 @@
 import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
-import { PDFViewer, Page, Text, View, Document } from '@react-pdf/renderer';
+import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
-  page: {
-    flexDirection: 'row',
-    backgroundColor: '#E4E4E4'
+  rootBill:{
+    display:'flex',
+    flexDirection:'row',
+    width:'100%',
   },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
+  invoice:{
+    display:'flex',
+    flexDirection:'column',
+    width:'70vw',
+    backgroundColor:'red',
+    margin: theme.spacing(1),
   },
+  total:{
+    display:'flex',
+    flexDirection:'column',
+    width:'30vw',
+    backgroundColor:'green',
+    margin: theme.spacing(1),
+  }
 });
-
-
 class Bill extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    var bill = this.props.data;
     const { classes } = this.props;
-    console.log('Bill Data: ',this.props.data);
     return (
-      <PDFViewer width="100%" height="100%">
-        <Document>
-          <Page size="A4" style={classes.page}>
-            <View style={classes.section}>
-              <Text>Section #1</Text>
-            </View>
-            <View style={classes.section}>
-              <Text>Section #2</Text>
-            </View>
-          </Page>
-        </Document>
-      </PDFViewer>
+        <div className={classes.rootBill}>
+          <div className={classes.invoice}>
+            Invoice Section
+          </div>
+          <div className={classes.total}>2</div>
+        </div>
     )
   }
 }
